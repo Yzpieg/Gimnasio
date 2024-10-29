@@ -11,26 +11,22 @@ if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
 }
 
-// Obtener datos del formulario
-$nombre = $_POST['nombre'];
-$email = $_POST['email'];
-$password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-$rol = $_POST['rol'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $nombre = $conn->real_escape_string($_POST['nombre']);
+    $email = $conn->real_escape_string($_POST['email']);
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $rol = 'miembro'; // Asignar siempre el rol "miembro"
 
-// Insertar el nuevo usuario en la base de datos
-$sql = "INSERT INTO usuarios (nombre, email, password, rol) VALUES ('$nombre', '$email', '$password', '$rol')";
+    $stmt = $conn->prepare("INSERT INTO usuarios (nombre, email, password, rol) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("ssss", $nombre, $email, $password, $rol);
 
-if ($conn->query($sql) === TRUE) {
-    // Redirigir según el rol del usuario
-    if ($rol == 'miembro') {
-        header("Location: miembro.php");
-    } elseif ($rol == 'monitor') {
-        header("Location: monitor.php");
+    if ($stmt->execute()) {
+        header("Location: index.html?mensaje=Registro+exitoso");
     } else {
-        header("Location: admin.php");
+        header("Location: index.html?mensaje=Error+al+registrarse");
     }
-} else {
-    echo "Error: " . $sql . "<br>" . $conn->error;
+
+    $stmt->close();
 }
 
 $conn->close();
