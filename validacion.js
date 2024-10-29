@@ -50,11 +50,12 @@ function valFormMiembro() {
     }
 
     // Validación del teléfono (solo números, máximo 9 caracteres)
-    const telefonoRegex = /^\d{1,9}$/;
+    const telefonoRegex = /^\d{9}$/;
     if (!telefonoRegex.test(telefono)) {
-        alert("Por favor, ingresa un número de teléfono válido de hasta 9 dígitos.");
+        alert("Por favor, ingresa un número de teléfono válido de exactamente 9 dígitos.");
         return false;
     }
+
 
     return true; // Permite el envío del formulario si todos los campos son válidos
 }

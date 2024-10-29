@@ -23,7 +23,7 @@
         </div>
     <?php endif; ?>
 
-    <div class="registro-container">
+    <div class="form_container">
         <h2>Registro de Usuario</h2>
         <form action="registro.php" method="POST" onsubmit="return validarFormulario()">
             <label for="nombre">Nombre:</label>
@@ -39,7 +39,7 @@
         </form>
     </div>
 
-    <div class="login-container">
+    <div class="form_container">
         <h2>Inicio de Sesión</h2>
         <form action="login.php" method="POST">
             <label for="email_login">Email:</label>

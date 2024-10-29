@@ -66,42 +66,42 @@ $result = $conn->query("SELECT id_usuario, nombre, email, rol FROM usuarios");
             <p><?php echo htmlspecialchars($_GET['mensaje']); ?></p>
         </div>
     <?php endif; ?>
-
-    <table>
-        <tr>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>Rol</th>
-            <th>Acciones</th>
-        </tr>
-        <?php while ($row = $result->fetch_assoc()): ?>
+    <div class="table_container">
+        <table>
             <tr>
-                <td><?php echo htmlspecialchars($row['nombre']); ?></td>
-                <td><?php echo htmlspecialchars($row['email']); ?></td>
-                <td><?php echo htmlspecialchars($row['rol']); ?></td>
-                <td>
-                    <!-- Formulario para actualizar rol -->
-                    <form action="admin.php" method="POST" style="display:inline;">
-                        <input type="hidden" name="id_usuario" value="<?php echo $row['id_usuario']; ?>">
-                        <select name="nuevo_rol">
-                            <option value="miembro" <?php echo $row['rol'] == 'miembro' ? 'selected' : ''; ?>>Miembro</option>
-                            <option value="monitor" <?php echo $row['rol'] == 'monitor' ? 'selected' : ''; ?>>Monitor</option>
-                            <option value="admin" <?php echo $row['rol'] == 'admin' ? 'selected' : ''; ?>>Admin</option>
-                        </select>
-                        <button type="submit">Actualizar Rol</button>
-                    </form>
-
-                    <!-- Formulario para eliminar usuario -->
-                    <form action="admin.php" method="POST" style="display:inline;">
-                        <input type="hidden" name="id_usuario" value="<?php echo $row['id_usuario']; ?>">
-                        <input type="hidden" name="eliminar_usuario" value="1">
-                        <button type="submit" onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">Eliminar</button>
-                    </form>
-                </td>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Acciones</th>
             </tr>
-        <?php endwhile; ?>
-    </table>
+            <?php while ($row = $result->fetch_assoc()): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($row['nombre']); ?></td>
+                    <td><?php echo htmlspecialchars($row['email']); ?></td>
+                    <td><?php echo htmlspecialchars($row['rol']); ?></td>
+                    <td>
+                        <!-- Formulario para actualizar rol -->
+                        <form action="admin.php" method="POST" style="display:inline;">
+                            <input type="hidden" name="id_usuario" value="<?php echo $row['id_usuario']; ?>">
+                            <select name="nuevo_rol">
+                                <option value="miembro" <?php echo $row['rol'] == 'miembro' ? 'selected' : ''; ?>>Miembro</option>
+                                <option value="monitor" <?php echo $row['rol'] == 'monitor' ? 'selected' : ''; ?>>Monitor</option>
+                                <option value="admin" <?php echo $row['rol'] == 'admin' ? 'selected' : ''; ?>>Admin</option>
+                            </select>
+                            <button type="submit">Actualizar Rol</button>
+                        </form>
 
+                        <!-- Formulario para eliminar usuario -->
+                        <form action="admin.php" method="POST" style="display:inline;">
+                            <input type="hidden" name="id_usuario" value="<?php echo $row['id_usuario']; ?>">
+                            <input type="hidden" name="eliminar_usuario" value="1">
+                            <button type="submit" onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            <?php endwhile; ?>
+        </table>
+    </div>
 </body>
 
 </html>
