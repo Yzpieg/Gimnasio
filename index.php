@@ -7,6 +7,26 @@
     <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
+    <!-- Mostrar mensaje de confirmación si existe -->
+    <?php if (isset($_GET['mensaje'])): ?>
+        <div class="mensaje-confirmacion">
+            <p><?php echo htmlspecialchars($_GET['mensaje']); ?></p>
+        </div>
+    <?php endif; ?>
+    <!-- Mostrar mensaje de error si existe -->
+    <?php if (isset($_GET['mensaje'])): ?>
+    <div class="mensaje-confirmacion">
+        <p><?php echo htmlspecialchars($_GET['mensaje']); ?></p>
+    </div>
+<?php endif; ?>
+
+<?php if (isset($_GET['error'])): ?>
+    <div class="mensaje-error">
+        <p><?php echo htmlspecialchars($_GET['error']); ?></p>
+    </div>
+<?php endif; ?>
+
+
     <div class="registro-container">
         <h2>Registro de Usuario</h2>
         <form action="registro.php" method="POST" onsubmit="return validarFormulario()">
@@ -21,11 +41,6 @@
 
             <button type="submit">Registrarse</button>
         </form>
-        
-        <!-- Mensaje de éxito o error de registro -->
-        <?php if (isset($_GET['mensaje'])): ?>
-            <p><?php echo htmlspecialchars($_GET['mensaje']); ?></p>
-        <?php endif; ?>
     </div>
 
     <div class="login-container">
@@ -39,11 +54,6 @@
 
             <button type="submit">Iniciar Sesión</button>
         </form>
-
-        <!-- Mensaje de error de inicio de sesión -->
-        <?php if (isset($_GET['error'])): ?>
-            <p><?php echo htmlspecialchars($_GET['error']); ?></p>
-        <?php endif; ?>
     </div>
     <script src="validacion.js"></script>
 </body>

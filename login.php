@@ -34,10 +34,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             exit();
         } else {
-            header("Location: index.html?error=Contraseña+incorrecta");
+            header("Location: index.php?error=Contraseña+incorrecta");
         }
     } else {
-        header("Location: index.html?error=Usuario+no+encontrado");
+        header("Location: index.php?error=Usuario+no+encontrado");
     }
 
     $stmt->close();
