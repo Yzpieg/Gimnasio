@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gimnasio - Registro e Inicio de Sesión</title>
     <link rel="stylesheet" href="estilos.css">
 </head>
+
 <body>
     <!-- Mostrar mensaje de confirmación si existe -->
     <?php if (isset($_GET['mensaje'])): ?>
@@ -13,19 +15,13 @@
             <p><?php echo htmlspecialchars($_GET['mensaje']); ?></p>
         </div>
     <?php endif; ?>
+
     <!-- Mostrar mensaje de error si existe -->
-    <?php if (isset($_GET['mensaje'])): ?>
-    <div class="mensaje-confirmacion">
-        <p><?php echo htmlspecialchars($_GET['mensaje']); ?></p>
-    </div>
-<?php endif; ?>
-
-<?php if (isset($_GET['error'])): ?>
-    <div class="mensaje-error">
-        <p><?php echo htmlspecialchars($_GET['error']); ?></p>
-    </div>
-<?php endif; ?>
-
+    <?php if (isset($_GET['error'])): ?>
+        <div class="mensaje-error">
+            <p><?php echo htmlspecialchars($_GET['error']); ?></p>
+        </div>
+    <?php endif; ?>
 
     <div class="registro-container">
         <h2>Registro de Usuario</h2>
@@ -55,7 +51,8 @@
             <button type="submit">Iniciar Sesión</button>
         </form>
     </div>
+
     <script src="validacion.js"></script>
 </body>
-</html>
 
+</html>
