@@ -80,18 +80,23 @@ $conn->close();
         </div>
     <?php endif; ?>
 
-    <form action="miembro.php" method="POST">
+    <form action="miembro.php" method="POST" onsubmit="return valFormMiembro();">
         <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($nombre); ?>" required>
+        <input type="text" id="nombre" name="nombre" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
 
         <label for="telefono">Teléfono:</label>
-        <input type="text" id="telefono" name="telefono" value="<?php echo htmlspecialchars($telefono); ?>" required>
+        <input type="text" id="telefono" name="telefono" required>
 
-        <label for="password">Nueva Contraseña (opcional):</label>
-        <input type="password" id="password" name="password">
+        <label for="password">Contraseña:</label>
+        <input type="password" id="password" name="password" required>
 
         <button type="submit">Actualizar Datos</button>
     </form>
+
+    <script src="validacion.js"></script>
 </body>
 
 </html>
