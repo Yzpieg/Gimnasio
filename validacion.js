@@ -21,10 +21,9 @@ function validarFormulario() {
         return false;
     }
 
-
-
     return true; // Permite el envío del formulario si todos los campos son válidos
 }
+
 function valFormMiembro() {
     const nombre = document.getElementById('nombre').value;
     const email = document.getElementById('email').value;
@@ -43,21 +42,23 @@ function valFormMiembro() {
         return false;
     }
 
-    // Validación de la contraseña (mínimo 6 caracteres)
-    if (password.length < 6) {
-        alert("La contraseña debe tener al menos 6 caracteres.");
+    // Validación de la contraseña (mínimo 6 caracteres, solo si se proporciona)
+    if (password.length > 0 && password.length < 6) {
+        alert("La contraseña debe tener al menos 6 caracteres si se proporciona.");
         return false;
     }
 
-    // Validación del teléfono (solo números, máximo 9 caracteres)
-    const telefonoRegex = /^\d{9}$/;
-    if (!telefonoRegex.test(telefono)) {
-        alert("Por favor, ingresa un número de teléfono válido de exactamente 9 dígitos.");
-        return false;
+    // Validación del teléfono (solo si se proporciona y tiene exactamente 9 dígitos)
+    if (telefono.trim().length > 0) { // Verifica solo si el campo no está vacío
+        const telefonoRegex = /^\d{9}$/;
+        if (!telefonoRegex.test(telefono)) {
+            alert("Por favor, ingresa un número de teléfono válido de exactamente 9 dígitos.");
+            return false;
+        }
     }
-
 
     return true; // Permite el envío del formulario si todos los campos son válidos
 }
+
 
 
