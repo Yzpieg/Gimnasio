@@ -9,7 +9,8 @@ body {
     background-color: #f4f4f4;
 }
 
-.registro-container, .login-container {
+.registro-container,
+.login-container {
     background: white;
     padding: 20px;
     border-radius: 5px;
@@ -19,11 +20,14 @@ body {
     margin-bottom: 20px;
 }
 
-input, select, button {
+input,
+select,
+button {
     width: 100%;
     margin: 10px 0;
     padding: 8px;
 }
+
 .mensaje-confirmacion {
     background-color: #d4edda;
     color: #155724;
@@ -34,6 +38,7 @@ input, select, button {
     text-align: center;
     width: 100%;
 }
+
 .mensaje-error {
     background-color: #f8d7da;
     color: #721c24;
@@ -43,4 +48,60 @@ input, select, button {
     margin-bottom: 20px;
     text-align: center;
     width: 100%;
+}
+
+table {
+    width: 80%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+table,
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+button {
+    padding: 5px 10px;
+    margin-top: 10px;
+}
+
+form {
+    width: 300px;
+    margin: 20px auto;
+    padding: 15px;
+    background-color: #f4f4f4;
+    border-radius: 5px;
+}
+
+form label {
+    display: block;
+    margin-top: 10px;
+}
+
+form input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }

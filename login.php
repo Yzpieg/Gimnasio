@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 // Conexión a la base de datos
 $servername = "localhost";
 $username = "root";
@@ -15,6 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $conn->real_escape_string($_POST['email']);
     $password = $_POST['password'];
 
+    // Consulta para verificar el usuario y el rol
     $stmt = $conn->prepare("SELECT id_usuario, password, rol FROM usuarios WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
@@ -25,23 +28,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->fetch();
 
         if (password_verify($password, $hashed_password)) {
-            if ($rol == 'miembro') {
-                header("Location: miembro.php");
+            // Guardar el rol en la sesión
+            $_SESSION['id_usuario'] = $id_usuario;
+            $_SESSION['rol'] = $rol;  // Aquí guardamos el rol
+
+            if ($rol == 'admin') {
+                header("Location: admin.php");
             } elseif ($rol == 'monitor') {
                 header("Location: monitor.php");
             } else {
-                header("Location: admin.php");
+                header("Location: miembro.php");
             }
             exit();
         } else {
             header("Location: index.php?error=Contraseña+incorrecta");
+            exit();
         }
     } else {
         header("Location: index.php?error=Usuario+no+encontrado");
+        exit();
     }
 
     $stmt->close();
 }
 
 $conn->close();
-?>
