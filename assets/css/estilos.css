@@ -1,0 +1,240 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f7f6;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* Header */
+header {
+    background-color: #3aafa9;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+}
+
+header h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+header nav a,
+header nav .logout-link {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 15px;
+    font-size: 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+header nav a:hover,
+header nav .logout-link:hover {
+    color: #2b7a78;
+}
+
+/* Main Content */
+main {
+    padding: 20px;
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+}
+
+/* Form Container */
+.form_container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 20px auto;
+    text-align: left;
+}
+
+.form_container h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #3aafa9;
+}
+
+.form_container label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form_container input,
+.form_container select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.form_container button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #3aafa9;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form_container button[type="submit"]:hover {
+    background-color: #2b7a78;
+}
+
+.button-container {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    /* Reduce el espacio entre botones si lo prefieres */
+    justify-content: flex-start;
+    /* Alinea los botones a la izquierda */
+    margin-top: 20px;
+}
+
+
+.button-container a,
+.button-container button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3aafa9;
+    color: #fff;
+    font-size: 16px;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button-container a:hover,
+.button-container button:hover {
+    background-color: #2b7a78;
+}
+
+.image-container {
+    text-align: center;
+    margin: 20px auto;
+}
+
+.gym-image {
+    max-width: 50%;
+
+    width: 100%;
+
+    height: auto;
+
+    border-radius: 8px;
+
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+
+}
+
+
+/* Error and Confirmation Messages */
+.mensaje-error {
+    color: #e74c3c;
+    font-weight: bold;
+    background-color: #fbeaea;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 15px 0;
+}
+
+.mensaje-confirmacion {
+    color: #27ae60;
+    font-weight: bold;
+    background-color: #eafaf1;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 15px 0;
+}
+
+/* Footer */
+footer {
+    background-color: #3aafa9;
+    color: #fff;
+    padding: 15px;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+}
+
+footer p {
+    margin: 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+
+td {
+    padding: 12px 20px;
+    /* Espacio interior para aumentar separación horizontal */
+    border-bottom: 1px solid #ddd;
+    /* Línea divisoria */
+    text-align: left;
+    /* Alineación de texto a la izquierda */
+}
+
+th {
+    padding: 12px 20px;
+    border-bottom: 1px solid #ddd;
+    background-color: #3aafa9;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+    /* Fondo alternado para mayor claridad */
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+    /* Fondo al pasar el cursor */
+}
+
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 20px;
+    }
+
+    .form_container,
+    button,
+    .button-container a,
+    .button-container button {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+}

@@ -1,10 +1,58 @@
 <?php
-session_start();
-require 'db_connection.php'; // Cargar la conexión a la base de datos
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['accion']) && $_POST['accion'] == 'logout') {
+    cerrarSesionUsuario();
+}
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['email'];
-    $contrasenya = $_POST['contrasenya'];
+// functions.php
+function obtenerConexion()
+{
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "actividad_02";
+
+    // Crear la conexión
+    $conn = new mysqli($servername, $username, $password, $dbname);
+
+    // Verificar si hay errores de conexión
+    if ($conn->connect_error) {
+        die("Error de conexión: " . $conn->connect_error);
+    }
+
+    return $conn;
+}
+function redirigirConMensaje($mensaje)
+{
+    header("Location: usuarios.php?mensaje=" . urlencode($mensaje));
+    exit();
+}
+function verificarAdmin()
+{
+    session_start();
+
+    // Verificar que el usuario esté autenticado y tenga rol de administrador
+    if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'admin') {
+        header("Location: index.php?error=No+tienes+permisos+de+administrador");
+        exit();
+    }
+
+    // Mostrar mensaje de error si existe
+    if (isset($_SESSION['error'])) {
+        echo "<p class='mensaje-error'>{$_SESSION['error']}</p>";
+        unset($_SESSION['error']);
+    }
+
+    // Mostrar mensaje de confirmación si existe
+    if (isset($_SESSION['mensaje'])) {
+        echo "<p class='mensaje-confirmacion'>{$_SESSION['mensaje']}</p>";
+        unset($_SESSION['mensaje']);
+    }
+}
+// general.php
+function iniciarSesionUsuario($email, $contrasenya)
+{
+    session_start();
+    $conn = obtenerConexion();
 
     $_SESSION['form_data'] = ['email' => $email]; // Guardar el email en la sesión
 
@@ -30,9 +78,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['nombre'] = $nombre;
             $stmtNombre->close();
 
-            // Limpia los datos del formulario en la sesión al iniciar sesión correctamente
+            // Limpiar los datos del formulario en la sesión al iniciar sesión correctamente
             unset($_SESSION['form_data']);
 
+            // Redireccionar según el rol del usuario
             switch ($rol) {
                 case 'admin':
                     header("Location: /Gimnasio/src/admin.php");
@@ -58,7 +107,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: /Gimnasio/src/log.php");
         exit();
     }
-    $stmt->close();
-}
 
-$conn->close();
+    $stmt->close();
+    $conn->close();
+}
+function cerrarSesionUsuario()
+{
+    session_start();
+    session_unset();
+    session_destroy();
+    header("Location: /Gimnasio/index.php");
+    exit();
+}
