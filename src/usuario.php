@@ -19,11 +19,12 @@ $datos_usuario = obtenerDatosUsuario($conn, $id_usuario);
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nuevo_nombre = $_POST['nombre'];
     $nuevo_telefono = $_POST['telefono'];
-    $nueva_contrasenya = $_POST['contrasenya'] ?: null; // Mantener la contraseña actual si está vacía
+    $nueva_contrasenya = $_POST['contrasenya'] ?: null;
 
-    // Llamar a la función para actualizar los datos del usuario
-    actualizarDatosUsuario($conn, $id_usuario, $nuevo_nombre, $nuevo_telefono, $nueva_contrasenya);
+    // Llamada a actualizarDatosUsuario con la página actual como parámetro de redirección
+    actualizarDatosUsuario($conn, $id_usuario, $nuevo_nombre, $nuevo_telefono, $nueva_contrasenya, "usuario.php");
 }
+
 
 $conn->close();
 ?>

@@ -191,29 +191,31 @@ function restaurarUsuario($conn, $id_usuario)
 }
 function obtenerDatosUsuario($conn, $id_usuario)
 {
-    $nombre = $email = $telefono = ''; // Valores predeterminados como cadenas vacías
+    $nombre = $email = $telefono = $rol = ''; // Valores predeterminados como cadenas vacías
 
-    $stmt = $conn->prepare("SELECT nombre, email, telefono FROM usuario WHERE id_usuario = ?");
+    $stmt = $conn->prepare("SELECT nombre, email, telefono, rol FROM usuario WHERE id_usuario = ?");
     $stmt->bind_param("i", $id_usuario);
     $stmt->execute();
-    $stmt->bind_result($nombre, $email, $telefono);
+    $stmt->bind_result($nombre, $email, $telefono, $rol);
     $stmt->fetch();
     $stmt->close();
 
     // Retorna los datos como un array asociativo
     return [
-        'nombre' => $nombre ?: '', // Si es null, usa cadena vacía
-        'email' => $email ?: '',   // Si es null, usa cadena vacía
-        'telefono' => $telefono ?: '' // Si es null, usa cadena vacía
+        'nombre' => $nombre ?: '',      // Si es null, usa cadena vacía
+        'email' => $email ?: '',        // Si es null, usa cadena vacía
+        'telefono' => $telefono ?: '',  // Si es null, usa cadena vacía
+        'rol' => $rol ?: ''             // Si es null, usa cadena vacía
     ];
 }
 
 
-function actualizarDatosUsuario($conn, $id_usuario, $nuevo_nombre, $nuevo_telefono, $nueva_contrasenya = null)
+
+function actualizarDatosUsuario($conn, $id_usuario, $nuevo_nombre, $nuevo_telefono, $nueva_contrasenya = null, $paginaRedireccion = "usuario.php")
 {
     // Validar el teléfono (debe tener exactamente 9 dígitos si no está vacío)
     if (!empty($nuevo_telefono) && !preg_match('/^\d{9}$/', $nuevo_telefono)) {
-        header("Location: usuario.php?error=El+teléfono+debe+tener+exactamente+9+digitos");
+        redirigirConMensaje("El teléfono debe tener exactamente 9 dígitos", $paginaRedireccion . "&error");
         exit();
     }
 
@@ -231,10 +233,10 @@ function actualizarDatosUsuario($conn, $id_usuario, $nuevo_nombre, $nuevo_telefo
     $resultado = $stmt->execute();
     $stmt->close();
 
+    // Redireccionar con mensaje de éxito o error según el resultado
     if ($resultado) {
-        header("Location: usuario.php?mensaje=Datos+actualizados+correctamente");
-        exit();
+        redirigirConMensaje("Datos actualizados correctamente", $paginaRedireccion);
     } else {
-        echo "Error al actualizar los datos: " . $stmt->error;
+        redirigirConMensaje("Error al actualizar los datos", $paginaRedireccion);
     }
 }
