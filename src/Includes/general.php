@@ -26,13 +26,14 @@ function obtenerConexion()
 
     return $conn;
 }
-function redirigirConMensaje($mensaje, $pagina = "usuarios.php")
+function redirigirConMensaje($mensaje, $pagina)
 {
     // Verifica si la URL ya contiene un "?", en cuyo caso usa "&"
     $separador = strpos($pagina, '?') === false ? '?' : '&';
     header("Location: " . $pagina . $separador . "mensaje=" . urlencode($mensaje));
     exit();
 }
+
 
 
 function verificarAdmin()

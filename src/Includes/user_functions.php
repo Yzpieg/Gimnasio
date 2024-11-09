@@ -78,23 +78,23 @@ function crearUsuario($conn, $nombre, $email, $contrasenya, $rol)
 }
 
 
-function manejarAccionUsuario($conn)
+function manejarAccionUsuario($conn, $pagina = "usuarios.php")
 {
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_usuario'])) {
         $id_usuario = $_POST['id_usuario'];
 
         if (isset($_POST['eliminar_usuario'])) {
             eliminarUsuario($conn, $id_usuario);
-            redirigirConMensaje("Usuario eliminado correctamente");
+            redirigirConMensaje("Usuario eliminado correctamente", $pagina);
         } elseif (isset($_POST['crear_miembro'])) {
             crearMiembro($conn, $id_usuario);
-            redirigirConMensaje("Miembro creado correctamente");
+            redirigirConMensaje("Miembro creado correctamente", $pagina);
         } elseif (isset($_POST['crear_monitor'])) {
             crearMonitor($conn, $id_usuario);
-            redirigirConMensaje("Monitor creado correctamente");
+            redirigirConMensaje("Monitor creado correctamente", $pagina);
         } elseif (isset($_POST['restaurar_usuario'])) {
             restaurarUsuario($conn, $id_usuario);
-            redirigirConMensaje("Usuario restaurado correctamente");
+            redirigirConMensaje("Usuario restaurado correctamente", $pagina);
         }
     }
 }
@@ -108,7 +108,7 @@ function eliminarUsuario($conn, $id_usuario)
     $stmt->close();
 }
 
-function crearMiembro($conn, $id_usuario)
+function crearMiembro($conn, $id_usuario, $pagina = "usuarios.php")
 {
     // Verificar si ya es miembro
     $stmt = $conn->prepare("SELECT * FROM miembro WHERE id_usuario = ?");
@@ -117,7 +117,8 @@ function crearMiembro($conn, $id_usuario)
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
         $stmt->close();
-        redirigirConMensaje("El usuario ya es miembro");
+        redirigirConMensaje("El usuario ya es miembro", $pagina); // Redirige a la página especificada
+        return; // Detener ejecución si ya es miembro
     }
     $stmt->close();
 
@@ -141,7 +142,8 @@ function crearMiembro($conn, $id_usuario)
 }
 
 
-function crearMonitor($conn, $id_usuario)
+
+function crearMonitor($conn, $id_usuario, $pagina = "usuarios.php")
 {
     // Verificar si ya es monitor
     $stmt = $conn->prepare("SELECT * FROM monitor WHERE id_usuario = ?");
@@ -150,7 +152,8 @@ function crearMonitor($conn, $id_usuario)
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
         $stmt->close();
-        redirigirConMensaje("El usuario ya es monitor");
+        redirigirConMensaje("El usuario ya es monitor", $pagina); // Redirige a la página especificada
+        return; // Detener ejecución si ya es monitor
     }
     $stmt->close();
 
@@ -172,6 +175,7 @@ function crearMonitor($conn, $id_usuario)
     $stmt->execute();
     $stmt->close();
 }
+
 
 function restaurarUsuario($conn, $id_usuario)
 {

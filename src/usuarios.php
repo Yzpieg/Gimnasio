@@ -7,7 +7,7 @@ verificarAdmin();
 $conn = obtenerConexion();
 
 // Llamada a la función principal para manejar acciones
-manejarAccionUsuario($conn);
+manejarAccionUsuario($conn,);
 
 $title = "Gestión de usuarios";
 include 'includes/admin_header.php';
@@ -17,7 +17,6 @@ $result = $conn->query("SELECT id_usuario, nombre, email, rol FROM usuario WHERE
 ?>
 
 <body>
-
     <main>
         <h2>Gestión de Usuarios</h2>
 
@@ -31,7 +30,7 @@ $result = $conn->query("SELECT id_usuario, nombre, email, rol FROM usuario WHERE
         <!-- Botón para crear un nuevo usuario -->
         <div class="form_container">
             <form action="crear_usuario.php" method="post">
-                <button type="submit">Crear Usuario</button>
+                <button type="submit" title="Crea una nueva cuenta de usuario">Crear Usuario</button>
             </form>
         </div>
 
@@ -48,29 +47,28 @@ $result = $conn->query("SELECT id_usuario, nombre, email, rol FROM usuario WHERE
                     <td><?php echo htmlspecialchars($row['nombre']); ?></td>
                     <td><?php echo htmlspecialchars($row['email']); ?></td>
                     <td><?php echo htmlspecialchars($row['rol']); ?></td>
-                    <td>
+                    <td class="acciones">
                         <div class="button-container">
                             <form action="usuarios.php" method="POST" style="display:inline;">
                                 <input type="hidden" name="id_usuario" value="<?php echo $row['id_usuario']; ?>">
-                                <button type="submit" name="eliminar_usuario" onclick="return confirm('¿Estás seguro de eliminar este usuario?')">Eliminar Usuario</button>
+                                <button type="submit" name="eliminar_usuario" onclick="return confirm('¿Estás seguro de que deseas eliminar esta cuenta? Esta acción no se puede deshacer.')" title="Eliminar definitivamente esta cuenta de usuario">Eliminar Cuenta</button>
                             </form>
                             <form action="usuarios.php" method="POST" style="display:inline;">
                                 <input type="hidden" name="id_usuario" value="<?php echo $row['id_usuario']; ?>">
-                                <button type="submit" name="crear_miembro" onclick="return confirm('¿Estás seguro de crear este miembro?')">Crear Miembro</button>
+                                <button type="submit" name="crear_miembro" onclick="return confirm('¿Deseas asignar el rol de miembro a este usuario? Cualquier rol anterior será reemplazado.')" title="Asignar el rol de miembro a este usuario">Asignar Rol Miembro</button>
                             </form>
                             <form action="usuarios.php" method="POST" style="display:inline;">
                                 <input type="hidden" name="id_usuario" value="<?php echo $row['id_usuario']; ?>">
-                                <button type="submit" name="crear_monitor" onclick="return confirm('¿Estás seguro de crear este monitor?')">Crear Monitor</button>
+                                <button type="submit" name="crear_monitor" onclick="return confirm('¿Estás seguro de que quieres asignar el rol de monitor a este usuario? Cualquier rol anterior será reemplazado.')" title="Asignar el rol de monitor a este usuario">Asignar Rol Monitor</button>
                             </form>
                             <form action="usuarios.php" method="POST" style="display:inline;">
                                 <input type="hidden" name="id_usuario" value="<?php echo $row['id_usuario']; ?>">
-                                <button type="submit" name="restaurar_usuario" onclick="return confirm('¿Estás seguro de restaurar este usuario?')" title="Elimina el rol miembro o monitor, pero conserva el usuario">Restaurar Usuario</button>
+                                <button type="submit" name="restaurar_usuario" onclick="return confirm('¿Estás seguro de que deseas quitar el rol especial de este usuario? El usuario mantendrá su cuenta básica.')" title="Quitar cualquier rol especial de este usuario">Quitar Rol Especial</button>
                             </form>
                             <form action="edit_usuario.php" method="GET" style="display:inline;">
                                 <input type="hidden" name="id_usuario" value="<?php echo $row['id_usuario']; ?>">
-                                <button type="submit" name="editar_usuario">Editar Usuario</button>
+                                <button type="submit" name="editar_usuario" title="Modificar el perfil de este usuario">Modificar Perfil</button>
                             </form>
-
                         </div>
                     </td>
                 </tr>

@@ -51,7 +51,7 @@ header nav .logout-link:hover {
 /* Main Content */
 main {
     padding: 20px;
-    max-width: 800px;
+    max-width: 1900px;
     width: 100%;
     text-align: center;
 }
@@ -108,11 +108,10 @@ main {
 
 .button-container {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: 10px;
-    /* Reduce el espacio entre botones si lo prefieres */
-    justify-content: flex-start;
-    /* Alinea los botones a la izquierda */
+    justify-content: center;
+    /* Centra los botones en la celda */
     margin-top: 20px;
 }
 
@@ -200,8 +199,15 @@ td {
     /* Espacio interior para aumentar separación horizontal */
     border-bottom: 1px solid #ddd;
     /* Línea divisoria */
-    text-align: left;
+    text-align: center;
     /* Alineación de texto a la izquierda */
+}
+
+td.acciones {
+    text-align: center;
+    /* Asegura que el contenido de la celda de acciones esté centrado */
+    vertical-align: middle;
+    /* Centra verticalmente en caso de que haya más contenido */
 }
 
 th {
