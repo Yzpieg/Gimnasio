@@ -37,8 +37,12 @@ function validarFormulario() {
         return false;
     }
 
-    // Si todas las validaciones pasan, se permite el envío del formulario
-    return true;
+    const mensajeConfirmacion = "Estás a punto de actualizar los datos del usuario.\n\n" +
+        "Esta acción no se puede deshacer. Asegúrate de que toda la información sea correcta " +
+        "antes de continuar.\n\n" +
+        "¿Deseas continuar con la actualización de los datos?";
+    const confirmar = confirm(mensajeConfirmacion);
+    return confirmar;
 }
 
 

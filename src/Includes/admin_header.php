@@ -16,6 +16,7 @@
             <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'admin'): ?>
                 <a href="admin.php">Panel Principal</a>
                 <a href="usuarios.php">Usuarios</a>
+                <a href="miembros.php">Miembros</a>
                 <a href="monitores.php">Monitores</a>
                 <a href="clases.php">Clases</a>
                 <a href="membresias.php">Membresías</a>
