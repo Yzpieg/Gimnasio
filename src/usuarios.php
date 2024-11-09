@@ -66,10 +66,11 @@ $result = $conn->query("SELECT id_usuario, nombre, email, rol FROM usuario WHERE
                                 <input type="hidden" name="id_usuario" value="<?php echo $row['id_usuario']; ?>">
                                 <button type="submit" name="restaurar_usuario" onclick="return confirm('¿Estás seguro de restaurar este usuario?')" title="Elimina el rol miembro o monitor, pero conserva el usuario">Restaurar Usuario</button>
                             </form>
-                            <form action="usuarios.php" method="POST" style="display:inline;">
+                            <form action="edit_usuario.php" method="GET" style="display:inline;">
                                 <input type="hidden" name="id_usuario" value="<?php echo $row['id_usuario']; ?>">
                                 <button type="submit" name="editar_usuario">Editar Usuario</button>
                             </form>
+
                         </div>
                     </td>
                 </tr>

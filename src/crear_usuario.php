@@ -8,6 +8,7 @@ $conn = obtenerConexion();
 
 $title = "crear usuario";
 include 'includes/admin_header.php';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['crear_usuario'])) {
     // Capturar los datos del formulario
     $nombre = $_POST['nombre'];

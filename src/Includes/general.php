@@ -1,9 +1,14 @@
 <?php
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['accion']) && $_POST['accion'] == 'logout') {
     cerrarSesionUsuario();
 }
 
-// functions.php
+
 function obtenerConexion()
 {
     $servername = "localhost";
@@ -21,15 +26,14 @@ function obtenerConexion()
 
     return $conn;
 }
-function redirigirConMensaje($mensaje)
+function redirigirConMensaje($mensaje, $pagina = "../src/usuarios.php")
 {
-    header("Location: usuarios.php?mensaje=" . urlencode($mensaje));
+    header("Location: " . $pagina . "?mensaje=" . urlencode($mensaje));
     exit();
 }
+
 function verificarAdmin()
 {
-    session_start();
-
     // Verificar que el usuario esté autenticado y tenga rol de administrador
     if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'admin') {
         header("Location: index.php?error=No+tienes+permisos+de+administrador");
@@ -51,7 +55,6 @@ function verificarAdmin()
 // general.php
 function iniciarSesionUsuario($email, $contrasenya)
 {
-    session_start();
     $conn = obtenerConexion();
 
     $_SESSION['form_data'] = ['email' => $email]; // Guardar el email en la sesión
@@ -84,27 +87,27 @@ function iniciarSesionUsuario($email, $contrasenya)
             // Redireccionar según el rol del usuario
             switch ($rol) {
                 case 'admin':
-                    header("Location: /Gimnasio/src/admin.php");
+                    header("Location: ../src/admin.php");
                     break;
                 case 'monitor':
-                    header("Location: /Gimnasio/src/monitor.php");
+                    header("Location: ../src/monitor.php");
                     break;
                 case 'miembro':
-                    header("Location: /Gimnasio/src/miembro.php");
+                    header("Location: ../src/miembro.php");
                     break;
                 default:
-                    header("Location: /Gimnasio/src/usuario.php");
+                    header("Location: ../src/usuario.php");
                     break;
             }
             exit();
         } else {
             $_SESSION['error'] = "Contraseña incorrecta";
-            header("Location: /Gimnasio/src/log.php");
+            header("Location: ../src/log.php");
             exit();
         }
     } else {
         $_SESSION['error'] = "Usuario no encontrado";
-        header("Location: /Gimnasio/src/log.php");
+        header("Location: ../src/log.php");
         exit();
     }
 
@@ -116,6 +119,6 @@ function cerrarSesionUsuario()
     session_start();
     session_unset();
     session_destroy();
-    header("Location: /Gimnasio/index.php");
+    header("Location: ../../index.php");
     exit();
 }

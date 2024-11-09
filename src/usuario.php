@@ -6,7 +6,7 @@ $conn = obtenerConexion();
 
 // Verificar si el usuario ha iniciado sesión, de lo contrario redirigir al inicio
 if (!isset($_SESSION['id_usuario'])) {
-    header("Location: /Gimnasio/index.php?error=Debes+iniciar+sesión+primero");
+    header("Location: ../index.php?error=Debes+iniciar+sesión+primero");
     exit();
 }
 
@@ -35,7 +35,7 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil del Usuario</title>
-    <link rel="stylesheet" href="/Gimnasio/assets/css/estilos.css">
+    <link rel="stylesheet" href="../assets/css/estilos.css">
 </head>
 
 <body>

@@ -38,7 +38,7 @@ function crearFormUsuario($conn, $nombre, $email, $contrasenya, $confirmar_contr
         // Confirmar la transacción
         $conn->commit();
         $_SESSION['mensaje'] = "Usuario creado exitosamente";
-        header("Location: usuarios.php");
+        header("Location: crear_usuario.php");
         exit();
     } catch (Exception $e) {
         // En caso de error, deshacer la transacción
