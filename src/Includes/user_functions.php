@@ -314,3 +314,48 @@ function modUsuario($conn, $id_usuario, $nuevo_nombre, $nuevo_email, $nuevo_tele
         redirigirConMensaje("Error al actualizar los datos", $paginaRedireccion);
     }
 }
+function obtenerUsuarios($conn, $id_admin, $busqueda = '', $orden_columna = 'nombre', $orden_direccion = 'ASC')
+{
+    // Validar las entradas de columna y dirección para evitar inyecciones SQL
+    $columnas_validas = ['nombre', 'email', 'rol'];
+    $direccion_valida = ['ASC', 'DESC'];
+
+    if (!in_array($orden_columna, $columnas_validas)) {
+        $orden_columna = 'nombre';
+    }
+    if (!in_array($orden_direccion, $direccion_valida)) {
+        $orden_direccion = 'ASC';
+    }
+
+    // Construir la consulta SQL con el filtro de búsqueda y ordenamiento
+    $sql = "SELECT id_usuario, nombre, email, rol FROM usuario WHERE id_usuario != ?";
+
+    // Agregar filtro de búsqueda si se proporciona un término
+    if ($busqueda) {
+        $sql .= " AND (nombre LIKE ? OR email LIKE ?)";
+    }
+
+    // Agregar ordenamiento
+    $sql .= " ORDER BY $orden_columna $orden_direccion";
+
+    // Preparar y ejecutar la consulta
+    $stmt = $conn->prepare($sql);
+    if ($busqueda) {
+        $busqueda_param = '%' . $busqueda . '%';
+        $stmt->bind_param("iss", $id_admin, $busqueda_param, $busqueda_param);
+    } else {
+        $stmt->bind_param("i", $id_admin);
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Devolver los resultados como un array asociativo
+    $usuarios = [];
+    while ($row = $result->fetch_assoc()) {
+        $usuarios[] = $row;
+    }
+
+    $stmt->close();
+    return $usuarios;
+}

@@ -229,6 +229,24 @@ tr:hover {
     /* Fondo al pasar el cursor */
 }
 
+/* Mantener el estilo de los enlaces dentro de th */
+th a {
+    color: inherit;
+    /* Usa el color blanco del th */
+    text-decoration: none;
+    /* Elimina el subrayado */
+    font-weight: bold;
+    /* Aplica el grosor de texto del th */
+}
+
+th a:hover {
+    text-decoration: underline;
+    /* Subraya solo al pasar el ratón, si lo prefieres */
+    color: #ddd;
+    /* Cambia ligeramente el color al pasar el ratón */
+}
+
+
 
 /* Responsive Design */
 @media (max-width: 600px) {

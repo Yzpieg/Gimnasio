@@ -9,6 +9,17 @@ $conn = obtenerConexion();
 // Llamada a la función principal para manejar acciones
 manejarAccionUsuario($conn,);
 
+// Capturar el término de búsqueda y los parámetros de ordenamiento
+$busqueda = $_GET['busqueda'] ?? '';
+$orden_columna = $_GET['orden'] ?? 'nombre';
+$orden_direccion = $_GET['direccion'] ?? 'ASC';
+
+// Obtener el ID del administrador actual desde la sesión
+$id_admin = $_SESSION['id_usuario'];
+
+// Obtener los usuarios con la función personalizada
+$usuarios = obtenerUsuarios($conn, $id_admin, $busqueda, $orden_columna, $orden_direccion);
+
 $title = "Gestión de usuarios";
 include 'includes/admin_header.php';
 
@@ -61,49 +72,47 @@ $result = $stmt->get_result();
         <!-- Tabla con lista de usuarios y acciones -->
         <table>
             <tr>
-                <th>Nombre</th>
-                <th>Email</th>
-                <th>Rol</th>
+                <th><a href="?orden=nombre&direccion=<?php echo ($orden_columna == 'nombre' && $orden_direccion == 'ASC') ? 'DESC' : 'ASC'; ?>">Nombre</a></th>
+                <th><a href="?orden=email&direccion=<?php echo ($orden_columna == 'email' && $orden_direccion == 'ASC') ? 'DESC' : 'ASC'; ?>">Email</a></th>
+                <th><a href="?orden=rol&direccion=<?php echo ($orden_columna == 'rol' && $orden_direccion == 'ASC') ? 'DESC' : 'ASC'; ?>">Rol</a></th>
                 <th>Acciones</th>
             </tr>
-            <?php while ($row = $result->fetch_assoc()): ?>
+            <?php foreach ($usuarios as $usuario): ?>
                 <tr>
-                    <td><?php echo htmlspecialchars($row['nombre']); ?></td>
-                    <td><?php echo htmlspecialchars($row['email']); ?></td>
-                    <td><?php echo htmlspecialchars($row['rol']); ?></td>
+                    <td><?php echo htmlspecialchars($usuario['nombre']); ?></td>
+                    <td><?php echo htmlspecialchars($usuario['email']); ?></td>
+                    <td><?php echo htmlspecialchars($usuario['rol']); ?></td>
                     <td class="acciones">
                         <div class="button-container">
                             <form action="usuarios.php" method="POST" style="display:inline;">
-                                <input type="hidden" name="id_usuario" value="<?php echo $row['id_usuario']; ?>">
+                                <input type="hidden" name="id_usuario" value="<?php echo $usuario['id_usuario']; ?>">
                                 <button type="submit" name="eliminar_usuario" onclick="return confirm('¿Estás seguro de que deseas eliminar esta cuenta? Esta acción no se puede deshacer.')" title="Eliminar definitivamente esta cuenta de usuario">Eliminar Cuenta</button>
                             </form>
                             <form action="usuarios.php" method="POST" style="display:inline;">
-                                <input type="hidden" name="id_usuario" value="<?php echo $row['id_usuario']; ?>">
+                                <input type="hidden" name="id_usuario" value="<?php echo $usuario['id_usuario']; ?>">
                                 <button type="submit" name="crear_miembro" onclick="return confirm('¿Deseas asignar el rol de miembro a este usuario? Cualquier rol anterior será reemplazado.')" title="Asignar el rol de miembro a este usuario">Asignar Rol Miembro</button>
                             </form>
                             <form action="usuarios.php" method="POST" style="display:inline;">
-                                <input type="hidden" name="id_usuario" value="<?php echo $row['id_usuario']; ?>">
+                                <input type="hidden" name="id_usuario" value="<?php echo $usuario['id_usuario']; ?>">
                                 <button type="submit" name="crear_monitor" onclick="return confirm('¿Estás seguro de que quieres asignar el rol de monitor a este usuario? Cualquier rol anterior será reemplazado.')" title="Asignar el rol de monitor a este usuario">Asignar Rol Monitor</button>
                             </form>
                             <form action="usuarios.php" method="POST" style="display:inline;">
-                                <input type="hidden" name="id_usuario" value="<?php echo $row['id_usuario']; ?>">
+                                <input type="hidden" name="id_usuario" value="<?php echo $usuario['id_usuario']; ?>">
                                 <button type="submit" name="restaurar_usuario" onclick="return confirm('¿Estás seguro de que deseas quitar el rol especial de este usuario? El usuario mantendrá su cuenta básica.')" title="Quitar cualquier rol especial de este usuario">Quitar Rol Especial</button>
                             </form>
                             <form action="edit_usuario.php" method="GET" style="display:inline;">
-                                <input type="hidden" name="id_usuario" value="<?php echo $row['id_usuario']; ?>">
+                                <input type="hidden" name="id_usuario" value="<?php echo $usuario['id_usuario']; ?>">
                                 <button type="submit" name="editar_usuario" title="Modificar el perfil de este usuario">Modificar Perfil</button>
                             </form>
                         </div>
                     </td>
                 </tr>
-            <?php endwhile; ?>
+            <?php endforeach; ?>
         </table>
     </main>
 
     <?php
-    // Incluir el footer y luego cerrar la conexión
     include 'includes/footer.php';
-    $stmt->close();
     $conn->close();
     ?>
 </body>
