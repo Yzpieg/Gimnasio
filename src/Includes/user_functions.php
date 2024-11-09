@@ -244,3 +244,73 @@ function actualizarDatosUsuario($conn, $id_usuario, $nuevo_nombre, $nuevo_telefo
         redirigirConMensaje("Error al actualizar los datos", $paginaRedireccion);
     }
 }
+function modUsuario($conn, $id_usuario, $nuevo_nombre, $nuevo_email, $nuevo_telefono, $nuevo_rol, $nueva_contrasenya = null, $paginaRedireccion = "edit_usuario.php")
+{
+    // Validar el teléfono (debe tener exactamente 9 dígitos si no está vacío)
+    if (!empty($nuevo_telefono) && !preg_match('/^\d{9}$/', $nuevo_telefono)) {
+        redirigirConMensaje("El teléfono debe tener exactamente 9 dígitos", $paginaRedireccion . "&error");
+        exit();
+    }
+
+    // Preparar la consulta SQL para actualizar el usuario
+    if (!empty($nueva_contrasenya)) {
+        $password_hash = password_hash($nueva_contrasenya, PASSWORD_DEFAULT);
+        $stmt = $conn->prepare("UPDATE usuario SET nombre = ?, email = ?, telefono = ?, contrasenya = ?, rol = ? WHERE id_usuario = ?");
+        $stmt->bind_param("sssssi", $nuevo_nombre, $nuevo_email, $nuevo_telefono, $password_hash, $nuevo_rol, $id_usuario);
+    } else {
+        $stmt = $conn->prepare("UPDATE usuario SET nombre = ?, email = ?, telefono = ?, rol = ? WHERE id_usuario = ?");
+        $stmt->bind_param("ssssi", $nuevo_nombre, $nuevo_email, $nuevo_telefono, $nuevo_rol, $id_usuario);
+    }
+
+    // Ejecutar la actualización y verificar el resultado
+    $resultado = $stmt->execute();
+    $stmt->close();
+
+    // Si la actualización fue exitosa, gestionar los roles de miembro, monitor, usuario, y admin
+    if ($resultado) {
+        // Si el nuevo rol es "miembro", eliminarlo de "monitor"
+        if ($nuevo_rol === 'miembro') {
+            $stmt = $conn->prepare("DELETE FROM monitor WHERE id_usuario = ?");
+            $stmt->bind_param("i", $id_usuario);
+            $stmt->execute();
+            $stmt->close();
+
+            // Agregar a la tabla miembro si no existe
+            $stmt = $conn->prepare("INSERT IGNORE INTO miembro (id_usuario, fecha_registro, tipo_membresia, entrenamiento) VALUES (?, NOW(), 'mensual', 'General')");
+            $stmt->bind_param("i", $id_usuario);
+            $stmt->execute();
+            $stmt->close();
+        }
+        // Si el nuevo rol es "monitor", eliminarlo de "miembro"
+        elseif ($nuevo_rol === 'monitor') {
+            $stmt = $conn->prepare("DELETE FROM miembro WHERE id_usuario = ?");
+            $stmt->bind_param("i", $id_usuario);
+            $stmt->execute();
+            $stmt->close();
+
+            // Agregar a la tabla monitor si no existe
+            $stmt = $conn->prepare("INSERT IGNORE INTO monitor (id_usuario, especialidad, disponibilidad) VALUES (?, 'General', 'disponible')");
+            $stmt->bind_param("i", $id_usuario);
+            $stmt->execute();
+            $stmt->close();
+        }
+        // Si el nuevo rol es "usuario" o "admin", eliminarlo de "monitor" y "miembro"
+        elseif ($nuevo_rol === 'usuario' || $nuevo_rol === 'admin') {
+            $stmt = $conn->prepare("DELETE FROM monitor WHERE id_usuario = ?");
+            $stmt->bind_param("i", $id_usuario);
+            $stmt->execute();
+            $stmt->close();
+
+            $stmt = $conn->prepare("DELETE FROM miembro WHERE id_usuario = ?");
+            $stmt->bind_param("i", $id_usuario);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        // Redirigir con mensaje de éxito
+        redirigirConMensaje("Datos actualizados correctamente", $paginaRedireccion);
+    } else {
+        // Redirigir con mensaje de error si la actualización falló
+        redirigirConMensaje("Error al actualizar los datos", $paginaRedireccion);
+    }
+}

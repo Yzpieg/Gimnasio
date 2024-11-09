@@ -6,6 +6,9 @@ verificarAdmin();
 
 $conn = obtenerConexion();
 
+// Llamada a la función principal para manejar acciones
+manejarAccionUsuario($conn,);
+
 $title = "Gestión de usuarios";
 include 'includes/admin_header.php';
 
