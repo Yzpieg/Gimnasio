@@ -6,30 +6,51 @@ verificarAdmin();
 
 $conn = obtenerConexion();
 
-// Llamada a la función principal para manejar acciones
-manejarAccionUsuario($conn,);
-
 $title = "Gestión de usuarios";
 include 'includes/admin_header.php';
 
-// Obtener todos los usuarios registrados excepto el admin actual
-$result = $conn->query("SELECT id_usuario, nombre, email, rol FROM usuario WHERE id_usuario != {$_SESSION['id_usuario']}");
+// Capturar el término de búsqueda si está presente
+$busqueda = $_GET['busqueda'] ?? '';
+
+// Construir la consulta SQL con el filtro de búsqueda
+$sql = "SELECT id_usuario, nombre, email, rol FROM usuario WHERE id_usuario != ?";
+
+// Agregar filtro de búsqueda a la consulta si hay un término
+if ($busqueda) {
+    $sql .= " AND (nombre LIKE ? OR email LIKE ?)";
+}
+
+// Preparar y ejecutar la consulta
+$stmt = $conn->prepare($sql);
+if ($busqueda) {
+    $busqueda_param = '%' . $busqueda . '%';
+    $stmt->bind_param("iss", $_SESSION['id_usuario'], $busqueda_param, $busqueda_param);
+} else {
+    $stmt->bind_param("i", $_SESSION['id_usuario']);
+}
+$stmt->execute();
+$result = $stmt->get_result();
+
 ?>
 
 <body>
     <main>
         <h2>Gestión de Usuarios</h2>
 
-        <!-- Mostrar mensaje de confirmación si existe, recibido como parámetro en la URL -->
+        <!-- Mostrar mensaje de confirmación si existe -->
         <?php if (isset($_GET['mensaje'])): ?>
             <div class="mensaje-confirmacion">
                 <p><?php echo htmlspecialchars($_GET['mensaje']); ?></p>
             </div>
         <?php endif; ?>
 
-        <!-- Botón para crear un nuevo usuario -->
+        <!-- Formulario de búsqueda -->
         <div class="form_container">
-            <form action="crear_usuario.php" method="post">
+            <form method="GET" action="usuarios.php">
+                <input type="text" name="busqueda" placeholder="Buscar usuario..." value="<?php echo htmlspecialchars($busqueda); ?>">
+                <button type="submit">Buscar</button>
+            </form>
+            <form action="crear_usuario.php" method="post" style="margin-top: 10px;">
                 <button type="submit" title="Crea una nueva cuenta de usuario">Crear Usuario</button>
             </form>
         </div>
@@ -79,6 +100,7 @@ $result = $conn->query("SELECT id_usuario, nombre, email, rol FROM usuario WHERE
     <?php
     // Incluir el footer y luego cerrar la conexión
     include 'includes/footer.php';
+    $stmt->close();
     $conn->close();
     ?>
 </body>

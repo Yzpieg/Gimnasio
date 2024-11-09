@@ -45,32 +45,45 @@ $conn->close();
     <?php endif; ?>
 
     <div class="form_container">
-        <form action="edit_usuario.php" method="POST" onsubmit="return valFormUsuario();">
+        <form action="edit_usuario.php" method="POST" onsubmit="return validarFormulario();">
             <input type="hidden" name="id_usuario" value="<?php echo htmlspecialchars($id_usuario); ?>">
 
             <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($datos_usuario['nombre'] ?? ''); ?>" required>
+            <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($datos_usuario['nombre'] ?? ''); ?>" required aria-label="Nombre completo del usuario">
 
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($datos_usuario['email'] ?? ''); ?>" disabled>
+            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($datos_usuario['email'] ?? ''); ?>" disabled title="El email no se puede editar" aria-label="Correo electrónico del usuario" aria-describedby="emailHelp">
+            <small id="emailHelp" style="display: block; color: #555; font-size: 12px;">* El email no se puede modificar.</small>
 
             <label for="rol">Rol:</label>
-            <input type="text" id="rol" name="rol" value="<?php echo htmlspecialchars($datos_usuario['rol'] ?? ''); ?>" disabled>
+            <input type="text" id="rol" name="rol" value="<?php echo htmlspecialchars($datos_usuario['rol'] ?? ''); ?>" disabled title="Para modificar el rol, dirígete a la pantalla de gestión de usuarios" aria-describedby="rolHelp">
+            <small id="rolHelp" style="display: block; color: #555; font-size: 12px;">* Para modificar el rol, dirígete a la pantalla de gestión de usuarios.</small>
 
             <label for="telefono">Teléfono:</label>
-            <input type="text" id="telefono" name="telefono" value="<?php echo htmlspecialchars($datos_usuario['telefono'] ?? ''); ?>" maxlength="9" pattern="\d{9}" title="Debe contener exactamente 9 dígitos numéricos" autocomplete="off">
+            <input type="text" id="telefono" name="telefono" value="<?php echo htmlspecialchars($datos_usuario['telefono'] ?? ''); ?>" maxlength="9" pattern="\d{9}" title="Debe contener exactamente 9 dígitos numéricos" autocomplete="off" aria-label="Número de teléfono del usuario">
 
             <label for="contrasenya">Contraseña (dejar en blanco para no cambiarla):</label>
-            <input type="password" id="contrasenya" name="contrasenya" autocomplete="new-password">
+            <input type="password" id="contrasenya" name="contrasenya" autocomplete="new-password" aria-label="Nueva contraseña para el usuario" title="Introduce una nueva contraseña solo si deseas cambiarla">
 
             <label for="confirmar_contrasenya">Confirmar Contraseña:</label>
-            <input type="password" id="confirmar_contrasenya" name="confirmar_contrasenya" autocomplete="new-password">
+            <input type="password" id="confirmar_contrasenya" name="confirmar_contrasenya" autocomplete="new-password" aria-label="Confirmación de la nueva contraseña" title="Repite la nueva contraseña para confirmar">
 
             <button type="submit">Actualizar Datos</button>
         </form>
     </div>
 
+    <script>
+        // Validación en JavaScript para confirmar la contraseña
+        function valFormUsuario() {
+            var contrasenya = document.getElementById("contrasenya").value;
+            var confirmarContrasenya = document.getElementById("confirmar_contrasenya").value;
+            if (contrasenya !== confirmarContrasenya) {
+                alert("Las contraseñas no coinciden. Por favor, revisa los campos de contraseña.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+
     <?php include 'includes/footer.php'; ?>
 </body>
-
-</html>

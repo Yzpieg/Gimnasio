@@ -25,8 +25,8 @@ function validarFormulario() {
         return false;
     }
 
-    // Validación de la longitud de la contraseña: al menos 6 caracteres
-    if (contrasenya.length < 6) {
+    // Validación de la longitud de la contraseña: al menos 6 caracteres si no está vacía
+    if (contrasenya && contrasenya.length < 6) {
         alert("La contraseña debe tener al menos 6 caracteres.");
         return false;
     }
