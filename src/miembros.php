@@ -18,7 +18,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['eliminar_usuario']) &
     exit();
 }
 
-
 // Capturar el término de búsqueda y los parámetros de ordenamiento
 $busqueda = $_GET['busqueda'] ?? '';
 $orden_columna = $_GET['orden'] ?? 'nombre';
@@ -56,14 +55,23 @@ include 'includes/admin_header.php';
             <tr>
                 <th><a href="?orden=nombre&direccion=<?php echo ($orden_columna == 'nombre' && $orden_direccion == 'ASC') ? 'DESC' : 'ASC'; ?>">Nombre</a></th>
                 <th><a href="?orden=email&direccion=<?php echo ($orden_columna == 'email' && $orden_direccion == 'ASC') ? 'DESC' : 'ASC'; ?>">Email</a></th>
-                <th><a href="?orden=rol&direccion=<?php echo ($orden_columna == 'rol' && $orden_direccion == 'ASC') ? 'DESC' : 'ASC'; ?>">Rol</a></th>
+                <th><a href="?orden=fecha_registro&direccion=<?php echo ($orden_columna == 'fecha_registro' && $orden_direccion == 'ASC') ? 'DESC' : 'ASC'; ?>">Fecha de Registro</a></th>
+                <th><a href="?orden=tipo&direccion=<?php echo ($orden_columna == 'tipo' && $orden_direccion == 'ASC') ? 'DESC' : 'ASC'; ?>">Tipo de Membresía</a></th>
+                <th><a href="?orden=entrenamiento&direccion=<?php echo ($orden_columna == 'entrenamiento' && $orden_direccion == 'ASC') ? 'DESC' : 'ASC'; ?>">Entrenamientos</a></th>
                 <th>Acciones</th>
             </tr>
             <?php foreach ($miembros as $miembro): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($miembro['nombre']); ?></td>
                     <td><?php echo htmlspecialchars($miembro['email']); ?></td>
-                    <td><?php echo htmlspecialchars($miembro['rol']); ?></td>
+                    <td><?php echo htmlspecialchars($miembro['fecha_registro']); ?></td>
+                    <td><?php echo htmlspecialchars($miembro['tipo']); ?></td>
+                    <td>
+                        <?php
+                        // Mostrar los entrenamientos como texto, ya que GROUP_CONCAT devuelve una cadena
+                        echo htmlspecialchars($miembro['entrenamientos'] ?? 'N/A');
+                        ?>
+                    </td>
                     <td class="acciones">
                         <div class="button-container">
                             <!-- Acción de eliminar -->
@@ -72,7 +80,7 @@ include 'includes/admin_header.php';
                                 <button type="submit" name="eliminar_usuario" onclick="return confirm('¿Estás seguro de que deseas eliminar este miembro? Esta acción no se puede deshacer.')" title="Eliminar definitivamente este miembro">Eliminar</button>
                             </form>
                             <!-- Acción de editar -->
-                            <form action="edit_usuario.php" method="GET" style="display:inline;">
+                            <form action="edit_miembro.php" method="GET" style="display:inline;">
                                 <input type="hidden" name="id_usuario" value="<?php echo $miembro['id_usuario']; ?>">
                                 <button type="submit" name="editar_usuario" title="Modificar el perfil de este miembro">Modificar Perfil</button>
                             </form>
@@ -81,6 +89,7 @@ include 'includes/admin_header.php';
                 </tr>
             <?php endforeach; ?>
         </table>
+
     </main>
 
     <?php

@@ -17,14 +17,42 @@ CREATE TABLE IF NOT EXISTS usuario (
 INSERT INTO usuario (id_usuario, nombre, email, contrasenya, rol)
 VALUES (1, 'admin', 'admin@gmail.com', '$2y$10$.EC.dUvGSPkqTiQ8FdXMHOTiZRISmWFKz8D8sp781iDXSHEx7JiSS', 'admin');
 
+-- Tabla para tipos de membresía
+CREATE TABLE IF NOT EXISTS membresia (
+    id_membresia INT AUTO_INCREMENT PRIMARY KEY,
+    tipo VARCHAR(50) UNIQUE,
+    precio DECIMAL(10, 2),
+    duracion INT COMMENT 'Duración en meses',
+    beneficios TEXT
+);
+
+-- Insertar algunos tipos de membresías para referencia
+INSERT INTO membresia (tipo, precio, duracion, beneficios)
+VALUES 
+    ('mensual', 30.00, 1, 'Acceso a todas las clases generales'),
+    ('anual', 300.00, 12, 'Acceso ilimitado y descuento en clases especiales'),
+    ('limitada', 15.00, 1, 'Acceso limitado a clases específicas');
+
 -- Tabla específica para miembros (clientes del gimnasio)
 CREATE TABLE IF NOT EXISTS miembro (
     id_miembro INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT,
     fecha_registro DATE,
-    tipo_membresia ENUM('mensual', 'anual', 'limitada') DEFAULT 'mensual',
-    entrenamiento VARCHAR(50),
-    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+    id_membresia INT,
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_membresia) REFERENCES membresia(id_membresia) ON DELETE SET NULL
+);
+
+-- Relación entre miembros y tipos de membresía (historial de membresías)
+CREATE TABLE IF NOT EXISTS miembro_membresia (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_miembro INT,
+    id_membresia INT,
+    fecha_inicio DATE,
+    fecha_fin DATE,
+    estado ENUM('activa', 'expirada') DEFAULT 'activa',
+    FOREIGN KEY (id_miembro) REFERENCES miembro(id_miembro) ON DELETE CASCADE,
+    FOREIGN KEY (id_membresia) REFERENCES membresia(id_membresia) ON DELETE CASCADE
 );
 
 -- Tabla específica para monitores (entrenadores)
@@ -59,27 +87,6 @@ CREATE TABLE IF NOT EXISTS asistencia (
     FOREIGN KEY (id_miembro) REFERENCES miembro(id_miembro) ON DELETE CASCADE
 );
 
--- Tabla para tipos de membresía
-CREATE TABLE IF NOT EXISTS membresia (
-    id_membresia INT AUTO_INCREMENT PRIMARY KEY,
-    tipo VARCHAR(50) UNIQUE,
-    precio DECIMAL(10, 2),
-    duracion INT COMMENT 'Duración en meses',
-    beneficios TEXT
-);
-
--- Relación entre miembros y tipos de membresía (historial de membresías)
-CREATE TABLE IF NOT EXISTS miembro_membresia (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    id_miembro INT,
-    id_membresia INT,
-    fecha_inicio DATE,
-    fecha_fin DATE,
-    estado ENUM('activa', 'expirada') DEFAULT 'activa',
-    FOREIGN KEY (id_miembro) REFERENCES miembro(id_miembro) ON DELETE CASCADE,
-    FOREIGN KEY (id_membresia) REFERENCES membresia(id_membresia) ON DELETE CASCADE
-);
-
 -- Tabla de pagos
 CREATE TABLE IF NOT EXISTS pago (
     id_pago INT AUTO_INCREMENT PRIMARY KEY,
@@ -109,20 +116,32 @@ CREATE TABLE IF NOT EXISTS rol_permiso (
     UNIQUE (rol, permiso)
 );
 
--- Insertar algunos tipos de membresías para referencia
-INSERT INTO membresia (tipo, precio, duracion, beneficios)
-VALUES 
-    ('mensual', 30.00, 1, 'Acceso a todas las clases generales'),
-    ('anual', 300.00, 12, 'Acceso ilimitado y descuento en clases especiales'),
-    ('limitada', 15.00, 1, 'Acceso limitado a clases específicas');
+-- Tabla para especialidades de los monitores y entrenamientos de los miembros
 CREATE TABLE IF NOT EXISTS especialidad (
     id_especialidad INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL UNIQUE
+    nombre VARCHAR(50) UNIQUE
 );
+
+-- Relación entre monitores y sus especialidades (un monitor puede tener múltiples especialidades)
 CREATE TABLE IF NOT EXISTS monitor_especialidad (
-    id_monitor_especialidad INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario INT,
+    id_monitor INT,
     id_especialidad INT,
-    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+    PRIMARY KEY (id_monitor, id_especialidad),
+    FOREIGN KEY (id_monitor) REFERENCES monitor(id_monitor) ON DELETE CASCADE,
     FOREIGN KEY (id_especialidad) REFERENCES especialidad(id_especialidad) ON DELETE CASCADE
 );
+
+-- Relación entre miembros y entrenamientos (un miembro puede tener múltiples entrenamientos)
+CREATE TABLE IF NOT EXISTS miembro_entrenamiento (
+    id_miembro INT,
+    id_especialidad INT,
+    PRIMARY KEY (id_miembro, id_especialidad),
+    FOREIGN KEY (id_miembro) REFERENCES miembro(id_miembro) ON DELETE CASCADE,
+    FOREIGN KEY (id_especialidad) REFERENCES especialidad(id_especialidad) ON DELETE CASCADE
+);
+
+-- Insertar especialidades de ejemplo para los entrenamientos y monitores
+INSERT INTO especialidad (nombre) VALUES ('Yoga'), ('Pilates'), ('Cardio'), ('Pesas'), ('Entrenamiento Funcional');
+
+
+

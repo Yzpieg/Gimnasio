@@ -40,14 +40,22 @@ function crearFormUsuario($conn, $nombre, $email, $contrasenya, $confirmar_contr
         $_SESSION['mensaje'] = "Usuario creado exitosamente";
         header("Location: crear_usuario.php");
         exit();
-    } catch (Exception $e) {
+    } catch (mysqli_sql_exception $e) {
         // En caso de error, deshacer la transacción
         $conn->rollback();
-        $_SESSION['error'] = "Error al crear el usuario: " . $e->getMessage();
+
+        // Verificar si el error es por email duplicado (código de error 1062)
+        if ($e->getCode() == 1062) {
+            $_SESSION['error'] = "Error: El email '$email' ya está registrado. Por favor, utiliza otro email.";
+        } else {
+            $_SESSION['error'] = "Error al crear el usuario: Ocurrió un problema inesperado.";
+        }
+
         header("Location: crear_usuario.php");
         exit();
     }
 }
+
 
 // Función para crear un nuevo usuario
 function crearUsuario($conn, $nombre, $email, $contrasenya, $rol)
@@ -71,9 +79,14 @@ function crearUsuario($conn, $nombre, $email, $contrasenya, $rol)
 
         $conn->commit();
         return ["success" => true, "message" => "Usuario creado exitosamente"];
-    } catch (Exception $e) {
+    } catch (mysqli_sql_exception $e) {
         $conn->rollback();
-        return ["success" => false, "message" => "Error al crear el usuario: " . $e->getMessage()];
+
+        if ($e->getCode() == 1062) {
+            return ["success" => false, "message" => "Error: El email '$email' ya está registrado. Por favor, utiliza otro email."];
+        }
+
+        return ["success" => false, "message" => "Error al crear el usuario: Ocurrió un problema inesperado."];
     }
 }
 
@@ -117,8 +130,8 @@ function crearMiembro($conn, $id_usuario, $pagina = "usuarios.php")
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
         $stmt->close();
-        redirigirConMensaje("El usuario ya es miembro", $pagina); // Redirige a la página especificada
-        return; // Detener ejecución si ya es miembro
+        redirigirConMensaje("El usuario ya es miembro", $pagina);
+        return;
     }
     $stmt->close();
 
@@ -128,9 +141,10 @@ function crearMiembro($conn, $id_usuario, $pagina = "usuarios.php")
     $stmt->execute();
     $stmt->close();
 
-    // Insertar en la tabla miembro
-    $stmt = $conn->prepare("INSERT INTO miembro (id_usuario, fecha_registro, tipo_membresia, entrenamiento) VALUES (?, NOW(), 'Básica', 'General')");
-    $stmt->bind_param("i", $id_usuario);
+    // Insertar en la tabla miembro (referencia a id_membresia)
+    $id_membresia = 1; // Ajuste inicial, aquí se podría permitir seleccionar la membresía al crear.
+    $stmt = $conn->prepare("INSERT INTO miembro (id_usuario, fecha_registro, id_membresia) VALUES (?, NOW(), ?)");
+    $stmt->bind_param("ii", $id_usuario, $id_membresia);
     $stmt->execute();
     $stmt->close();
 
@@ -143,6 +157,7 @@ function crearMiembro($conn, $id_usuario, $pagina = "usuarios.php")
 
 
 
+
 function crearMonitor($conn, $id_usuario, $pagina = "usuarios.php")
 {
     // Verificar si ya es monitor
@@ -152,8 +167,8 @@ function crearMonitor($conn, $id_usuario, $pagina = "usuarios.php")
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
         $stmt->close();
-        redirigirConMensaje("El usuario ya es monitor", $pagina); // Redirige a la página especificada
-        return; // Detener ejecución si ya es monitor
+        redirigirConMensaje("El usuario ya es monitor", $pagina);
+        return;
     }
     $stmt->close();
 
@@ -163,10 +178,11 @@ function crearMonitor($conn, $id_usuario, $pagina = "usuarios.php")
     $stmt->execute();
     $stmt->close();
 
-    // Insertar en la tabla monitor
-    $stmt = $conn->prepare("INSERT INTO monitor (id_usuario, especialidad, disponibilidad) VALUES (?, 'General', 'Disponible')");
+    // Insertar en la tabla monitor con especialidad predeterminada
+    $stmt = $conn->prepare("INSERT INTO monitor (id_usuario, especialidad, disponibilidad) VALUES (?, 'General', 'disponible')");
     $stmt->bind_param("i", $id_usuario);
     $stmt->execute();
+    $id_monitor = $conn->insert_id; // Obtener id del nuevo monitor
     $stmt->close();
 
     // Actualizar rol en usuario
@@ -174,7 +190,16 @@ function crearMonitor($conn, $id_usuario, $pagina = "usuarios.php")
     $stmt->bind_param("i", $id_usuario);
     $stmt->execute();
     $stmt->close();
+
+    // Asignar una especialidad inicial (ejemplo: Yoga, id_especialidad = 1)
+    $id_especialidad = 1;
+    $stmt = $conn->prepare("INSERT INTO monitor_especialidad (id_monitor, id_especialidad) VALUES (?, ?)");
+    $stmt->bind_param("ii", $id_monitor, $id_especialidad);
+    $stmt->execute();
+    $stmt->close();
 }
+
+
 
 
 function restaurarUsuario($conn, $id_usuario)
@@ -217,7 +242,6 @@ function obtenerDatosUsuario($conn, $id_usuario)
 
 function actualizarDatosUsuario($conn, $id_usuario, $nuevo_nombre, $nuevo_telefono, $nueva_contrasenya = null, $paginaRedireccion = "usuario.php")
 {
-    // Validar el teléfono (debe tener exactamente 9 dígitos si no está vacío)
     if (!empty($nuevo_telefono) && !preg_match('/^\d{9}$/', $nuevo_telefono)) {
         redirigirConMensaje("El teléfono debe tener exactamente 9 dígitos", $paginaRedireccion . "&error");
         exit();
@@ -233,17 +257,16 @@ function actualizarDatosUsuario($conn, $id_usuario, $nuevo_nombre, $nuevo_telefo
         $stmt->bind_param("ssi", $nuevo_nombre, $nuevo_telefono, $id_usuario);
     }
 
-    // Ejecutar actualización y devolver el resultado
     $resultado = $stmt->execute();
     $stmt->close();
 
-    // Redireccionar con mensaje de éxito o error según el resultado
     if ($resultado) {
         redirigirConMensaje("Datos actualizados correctamente", $paginaRedireccion);
     } else {
         redirigirConMensaje("Error al actualizar los datos", $paginaRedireccion);
     }
 }
+
 function modUsuario($conn, $id_usuario, $nuevo_nombre, $nuevo_email, $nuevo_telefono, $nuevo_rol, $nueva_contrasenya = null, $paginaRedireccion = "edit_usuario.php")
 {
     // Validar el teléfono (debe tener exactamente 9 dígitos si no está vacío)
@@ -262,13 +285,12 @@ function modUsuario($conn, $id_usuario, $nuevo_nombre, $nuevo_email, $nuevo_tele
         $stmt->bind_param("ssssi", $nuevo_nombre, $nuevo_email, $nuevo_telefono, $nuevo_rol, $id_usuario);
     }
 
-    // Ejecutar la actualización y verificar el resultado
+    // Ejecutar la actualización del usuario
     $resultado = $stmt->execute();
     $stmt->close();
 
-    // Si la actualización fue exitosa, gestionar los roles de miembro, monitor, usuario, y admin
     if ($resultado) {
-        // Si el nuevo rol es "miembro", eliminarlo de "monitor"
+        // Si el nuevo rol es "miembro", eliminarlo de "monitor" y asignar una membresía
         if ($nuevo_rol === 'miembro') {
             $stmt = $conn->prepare("DELETE FROM monitor WHERE id_usuario = ?");
             $stmt->bind_param("i", $id_usuario);
@@ -276,8 +298,9 @@ function modUsuario($conn, $id_usuario, $nuevo_nombre, $nuevo_email, $nuevo_tele
             $stmt->close();
 
             // Agregar a la tabla miembro si no existe
-            $stmt = $conn->prepare("INSERT IGNORE INTO miembro (id_usuario, fecha_registro, tipo_membresia, entrenamiento) VALUES (?, NOW(), 'mensual', 'General')");
-            $stmt->bind_param("i", $id_usuario);
+            $id_membresia = 1; // ID de membresía por defecto
+            $stmt = $conn->prepare("INSERT IGNORE INTO miembro (id_usuario, fecha_registro, id_membresia) VALUES (?, NOW(), ?)");
+            $stmt->bind_param("ii", $id_usuario, $id_membresia);
             $stmt->execute();
             $stmt->close();
         }
@@ -314,6 +337,7 @@ function modUsuario($conn, $id_usuario, $nuevo_nombre, $nuevo_email, $nuevo_tele
         redirigirConMensaje("Error al actualizar los datos", $paginaRedireccion);
     }
 }
+
 function obtenerUsuarios($conn, $id_admin, $busqueda = '', $orden_columna = 'nombre', $orden_direccion = 'ASC')
 {
     // Validar las entradas de columna y dirección para evitar inyecciones SQL

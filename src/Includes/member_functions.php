@@ -7,7 +7,7 @@ require_once('general.php');
 function obtenerMiembros($conn, $busqueda = '', $orden_columna = 'nombre', $orden_direccion = 'ASC')
 {
     // Validar columnas y dirección para evitar inyecciones SQL
-    $columnas_validas = ['nombre', 'email'];
+    $columnas_validas = ['nombre', 'email', 'fecha_registro', 'tipo', 'precio', 'duracion'];
     $direccion_valida = ['ASC', 'DESC'];
 
     if (!in_array($orden_columna, $columnas_validas)) {
@@ -17,18 +17,22 @@ function obtenerMiembros($conn, $busqueda = '', $orden_columna = 'nombre', $orde
         $orden_direccion = 'ASC';
     }
 
-    // Construir la consulta SQL para obtener solo los miembros
-    $sql = "SELECT u.id_usuario, u.nombre, u.email, u.rol
+    // Construir la consulta SQL para obtener los miembros con sus membresías y entrenamientos
+    $sql = "SELECT u.id_usuario, u.nombre, u.email, u.rol, m.fecha_registro, mb.tipo, mb.precio, mb.duracion,
+                   GROUP_CONCAT(e.nombre SEPARATOR ', ') AS entrenamientos
             FROM usuario u
-            INNER JOIN miembro m ON u.id_usuario = m.id_usuario";
+            INNER JOIN miembro m ON u.id_usuario = m.id_usuario
+            LEFT JOIN membresia mb ON m.id_membresia = mb.id_membresia
+            LEFT JOIN miembro_entrenamiento me ON m.id_miembro = me.id_miembro
+            LEFT JOIN especialidad e ON me.id_especialidad = e.id_especialidad";
 
     // Agregar filtro de búsqueda si se proporciona un término
     if ($busqueda) {
         $sql .= " WHERE u.nombre LIKE ? OR u.email LIKE ?";
     }
 
-    // Agregar ordenamiento
-    $sql .= " ORDER BY $orden_columna $orden_direccion";
+    // Agregar agrupación y ordenamiento
+    $sql .= " GROUP BY u.id_usuario ORDER BY $orden_columna $orden_direccion";
 
     // Preparar y ejecutar la consulta
     $stmt = $conn->prepare($sql);
@@ -49,6 +53,9 @@ function obtenerMiembros($conn, $busqueda = '', $orden_columna = 'nombre', $orde
     $stmt->close();
     return $miembros;
 }
+
+
+
 function eliminarMiembro($conn, $id_usuario)
 {
     // Iniciar una transacción para eliminar de múltiples tablas si es necesario
@@ -75,4 +82,134 @@ function eliminarMiembro($conn, $id_usuario)
         $conn->rollback();
         return ["success" => false, "message" => "Error al eliminar el miembro: " . $e->getMessage()];
     }
+}
+function obtenerMiembroPorID($conn, $id_usuario)
+{
+    // Consulta para obtener los datos básicos del miembro, incluyendo la membresía
+    $sql = "SELECT u.id_usuario, u.nombre, u.email, u.rol, m.fecha_registro, m.id_membresia, mb.tipo AS tipo_membresia
+            FROM usuario u
+            INNER JOIN miembro m ON u.id_usuario = m.id_usuario
+            LEFT JOIN membresia mb ON m.id_membresia = mb.id_membresia
+            WHERE u.id_usuario = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id_usuario);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $miembro = $result->fetch_assoc();
+    $stmt->close();
+
+    // Verificar si el miembro existe antes de obtener entrenamientos
+    if (!$miembro) {
+        return null; // Miembro no encontrado
+    }
+
+    // Consulta para obtener los entrenamientos asociados al miembro
+    $sql = "SELECT e.id_especialidad, e.nombre 
+            FROM miembro_entrenamiento me
+            INNER JOIN especialidad e ON me.id_especialidad = e.id_especialidad
+            WHERE me.id_miembro = ?";
+    $stmt = $conn->prepare($sql);
+
+    // Convertir `id_usuario` a `id_miembro`
+    $id_miembro = $miembro['id_miembro'] ?? null;
+    $stmt->bind_param("i", $id_miembro);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Almacenar entrenamientos en un array
+    $entrenamientos = [];
+    while ($row = $result->fetch_assoc()) {
+        $entrenamientos[] = $row['id_especialidad'];
+    }
+    $stmt->close();
+
+    // Agregar la lista de entrenamientos al array del miembro
+    $miembro['entrenamientos'] = $entrenamientos;
+
+    return $miembro;
+}
+
+
+function actualizarMiembro($conn, $id_usuario, $nombre, $email, $fecha_registro, $id_membresia)
+{
+    try {
+        $sql = "UPDATE usuario u
+                JOIN miembro m ON u.id_usuario = m.id_usuario
+                SET u.nombre = ?, u.email = ?, m.fecha_registro = ?, m.id_membresia = ?
+                WHERE u.id_usuario = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssii", $nombre, $email, $fecha_registro, $id_membresia, $id_usuario);
+        $stmt->execute();
+        $stmt->close();
+
+        return ["success" => true, "message" => "Miembro actualizado correctamente"];
+    } catch (Exception $e) {
+        return ["success" => false, "message" => "Error al actualizar el miembro: " . $e->getMessage()];
+    }
+}
+
+
+function obtenerEntrenamientos($conn)
+{
+    $sql = "SELECT id_especialidad, nombre FROM especialidad";
+    $result = $conn->query($sql);
+
+    $entrenamientos = [];
+    while ($row = $result->fetch_assoc()) {
+        $entrenamientos[] = $row;
+    }
+
+    return $entrenamientos;
+}
+function actualizarEntrenamientosMiembro($conn, $id_miembro, $entrenamientos)
+{
+    // Primero, validar que el id_miembro existe en la tabla miembro
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM miembro WHERE id_miembro = ?");
+    $stmt->bind_param("i", $id_miembro);
+    $stmt->execute();
+    $stmt->bind_result($count);
+    $stmt->fetch();
+    $stmt->close();
+
+    if ($count == 0) {
+        throw new Exception("El miembro con ID $id_miembro no existe.");
+    }
+
+    // Eliminar entrenamientos actuales
+    $stmt = $conn->prepare("DELETE FROM miembro_entrenamiento WHERE id_miembro = ?");
+    $stmt->bind_param("i", $id_miembro);
+    $stmt->execute();
+    $stmt->close();
+
+    // Insertar los nuevos entrenamientos
+    $stmt = $conn->prepare("INSERT INTO miembro_entrenamiento (id_miembro, id_especialidad) VALUES (?, ?)");
+    foreach ($entrenamientos as $id_especialidad) {
+        $stmt->bind_param("ii", $id_miembro, $id_especialidad);
+        $stmt->execute();
+    }
+    $stmt->close();
+}
+
+function obtenerMembresias($conn)
+{
+    $sql = "SELECT id_membresia, tipo, precio, duracion, beneficios FROM membresia";
+    $result = $conn->query($sql);
+
+    $membresias = [];
+    while ($row = $result->fetch_assoc()) {
+        $membresias[] = $row;
+    }
+
+    return $membresias;
+}
+function obtenerIdMiembroPorUsuario($conn, $id_usuario)
+{
+    $sql = "SELECT id_miembro FROM miembro WHERE id_usuario = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id_usuario);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $miembro = $result->fetch_assoc();
+    $stmt->close();
+    return $miembro['id_miembro'] ?? null;
 }
