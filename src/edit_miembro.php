@@ -37,21 +37,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $resultado = actualizarMiembro($conn, $id_usuario, $nombre, $email, $fecha_registro, $id_membresia);
 
     if ($resultado['success']) {
-        // Obtener el id_miembro usando id_usuario
         $id_miembro = obtenerIdMiembroPorUsuario($conn, $id_usuario);
         if ($id_miembro) {
-            // Actualizar entrenamientos solo si el miembro existe
             actualizarEntrenamientosMiembro($conn, $id_miembro, $entrenamientos_seleccionados);
             $mensaje = "Miembro actualizado correctamente.";
+
+            // Volver a cargar los datos del miembro después de actualizar
+            $miembro = obtenerMiembroPorID($conn, $id_usuario);
         } else {
             $mensaje = "Error: Miembro no encontrado.";
         }
     } else {
         $mensaje = $resultado['message'];
     }
-
-    header("Location: miembros.php?mensaje=" . urlencode($mensaje));
-    exit();
 }
 
 include 'includes/admin_header.php';
@@ -62,11 +60,12 @@ include 'includes/admin_header.php';
     <main>
         <h2>Editar Miembro</h2>
 
-        <?php if (isset($_GET['mensaje'])): ?>
+        <?php if (isset($mensaje)): ?>
             <div class="mensaje-confirmacion">
-                <p><?php echo htmlspecialchars($_GET['mensaje']); ?></p>
+                <p><?php echo htmlspecialchars($mensaje); ?></p>
             </div>
         <?php endif; ?>
+
 
         <div class="form_container">
             <?php if ($miembro): ?>
@@ -107,19 +106,21 @@ include 'includes/admin_header.php';
                     <label>Entrenamientos:</label>
                     <div class="entrenamientos-checkboxes">
                         <?php foreach ($entrenamientos as $entrenamiento): ?>
-                            <div>
+                            <div class="entrenamiento-item">
+                                <label for="entrenamiento_<?php echo $entrenamiento['id_especialidad']; ?>">
+                                    <?php echo htmlspecialchars($entrenamiento['nombre']); ?>
+                                </label>
                                 <input
                                     type="checkbox"
                                     id="entrenamiento_<?php echo $entrenamiento['id_especialidad']; ?>"
                                     name="entrenamiento[]"
                                     value="<?php echo $entrenamiento['id_especialidad']; ?>"
                                     <?php echo in_array($entrenamiento['id_especialidad'], $miembro['entrenamientos']) ? 'checked' : ''; ?>>
-                                <label for="entrenamiento_<?php echo $entrenamiento['id_especialidad']; ?>">
-                                    <?php echo htmlspecialchars($entrenamiento['nombre']); ?>
-                                </label>
                             </div>
                         <?php endforeach; ?>
                     </div>
+
+
 
                     <!-- Botón para guardar los cambios -->
                     <button type="submit">Guardar Cambios</button>

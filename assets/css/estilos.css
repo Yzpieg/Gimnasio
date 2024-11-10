@@ -246,6 +246,40 @@ th a:hover {
     /* Cambia ligeramente el color al pasar el ratón */
 }
 
+.entrenamientos-checkboxes {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.entrenamiento-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    /* Nombre ocupa más espacio, checkbox ajustado a la derecha */
+    align-items: center;
+}
+
+.entrenamiento-item label {
+    text-align: left;
+    /* Alinea el texto a la izquierda */
+}
+
+.entrenamientos-checkboxes .entrenamiento-item:nth-child(odd) {
+    background-color: #f9f9f9;
+    /* Color de fondo claro para los elementos impares */
+}
+
+.entrenamientos-checkboxes .entrenamiento-item:nth-child(even) {
+    background-color: #e0e0e0;
+    /* Color de fondo más oscuro para los elementos pares */
+}
+
+.entrenamiento-item {
+    padding: 5px;
+    border-radius: 5px;
+}
+
+
 
 
 /* Responsive Design */

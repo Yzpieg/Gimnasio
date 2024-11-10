@@ -56,7 +56,7 @@ function verificarAdmin()
         unset($_SESSION['mensaje']);
     }
 }
-// general.php
+
 function iniciarSesionUsuario($email, $contrasenya)
 {
     $conn = obtenerConexion();

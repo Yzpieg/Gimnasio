@@ -85,8 +85,8 @@ function eliminarMiembro($conn, $id_usuario)
 }
 function obtenerMiembroPorID($conn, $id_usuario)
 {
-    // Consulta para obtener los datos básicos del miembro, incluyendo la membresía
-    $sql = "SELECT u.id_usuario, u.nombre, u.email, u.rol, m.fecha_registro, m.id_membresia, mb.tipo AS tipo_membresia
+    // Consultar datos básicos del miembro, incluyendo la membresía
+    $sql = "SELECT u.id_usuario, u.nombre, u.email, u.rol, m.fecha_registro, m.id_membresia, m.id_miembro, mb.tipo AS tipo_membresia
             FROM usuario u
             INNER JOIN miembro m ON u.id_usuario = m.id_usuario
             LEFT JOIN membresia mb ON m.id_membresia = mb.id_membresia
@@ -98,36 +98,32 @@ function obtenerMiembroPorID($conn, $id_usuario)
     $miembro = $result->fetch_assoc();
     $stmt->close();
 
-    // Verificar si el miembro existe antes de obtener entrenamientos
     if (!$miembro) {
         return null; // Miembro no encontrado
     }
 
-    // Consulta para obtener los entrenamientos asociados al miembro
-    $sql = "SELECT e.id_especialidad, e.nombre 
+    // Obtener los entrenamientos asociados
+    $sql = "SELECT e.id_especialidad
             FROM miembro_entrenamiento me
             INNER JOIN especialidad e ON me.id_especialidad = e.id_especialidad
             WHERE me.id_miembro = ?";
     $stmt = $conn->prepare($sql);
-
-    // Convertir `id_usuario` a `id_miembro`
-    $id_miembro = $miembro['id_miembro'] ?? null;
-    $stmt->bind_param("i", $id_miembro);
+    $stmt->bind_param("i", $miembro['id_miembro']);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Almacenar entrenamientos en un array
+    // Guardar los IDs de entrenamientos en un array
     $entrenamientos = [];
     while ($row = $result->fetch_assoc()) {
         $entrenamientos[] = $row['id_especialidad'];
     }
     $stmt->close();
 
-    // Agregar la lista de entrenamientos al array del miembro
     $miembro['entrenamientos'] = $entrenamientos;
 
     return $miembro;
 }
+
 
 
 function actualizarMiembro($conn, $id_usuario, $nombre, $email, $fecha_registro, $id_membresia)
@@ -163,6 +159,8 @@ function obtenerEntrenamientos($conn)
 }
 function actualizarEntrenamientosMiembro($conn, $id_miembro, $entrenamientos)
 {
+    // Inicializar $count para evitar advertencias en el editor
+    $count = 0;
     // Primero, validar que el id_miembro existe en la tabla miembro
     $stmt = $conn->prepare("SELECT COUNT(*) FROM miembro WHERE id_miembro = ?");
     $stmt->bind_param("i", $id_miembro);
