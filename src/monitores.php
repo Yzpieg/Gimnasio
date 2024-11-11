@@ -55,14 +55,18 @@ include 'includes/admin_header.php';
             <tr>
                 <th><a href="?orden=nombre&direccion=<?php echo ($orden_columna == 'nombre' && $orden_direccion == 'ASC') ? 'DESC' : 'ASC'; ?>">Nombre</a></th>
                 <th><a href="?orden=email&direccion=<?php echo ($orden_columna == 'email' && $orden_direccion == 'ASC') ? 'DESC' : 'ASC'; ?>">Email</a></th>
-                <th><a href="?orden=rol&direccion=<?php echo ($orden_columna == 'rol' && $orden_direccion == 'ASC') ? 'DESC' : 'ASC'; ?>">Rol</a></th>
+                <th><a href="?orden=especialidad&direccion=<?php echo ($orden_columna == 'especialidades' && $orden_direccion == 'ASC') ? 'DESC' : 'ASC'; ?>">Especialidades</a></th>
+                <th><a href="?orden=experiencia&direccion=<?php echo ($orden_columna == 'experiencia' && $orden_direccion == 'ASC') ? 'DESC' : 'ASC'; ?>">Experiencia</a></th>
+                <th><a href="?orden=disponibilidad&direccion=<?php echo ($orden_columna == 'disponibilidad' && $orden_direccion == 'ASC') ? 'DESC' : 'ASC'; ?>">Disponibilidad</a></th>
                 <th>Acciones</th>
             </tr>
             <?php foreach ($monitores as $monitor): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($monitor['nombre']); ?></td>
                     <td><?php echo htmlspecialchars($monitor['email']); ?></td>
-                    <td><?php echo htmlspecialchars($monitor['rol']); ?></td>
+                    <td><?php echo htmlspecialchars($monitor['especialidades']); ?></td>
+                    <td><?php echo htmlspecialchars($monitor['experiencia']); ?></td>
+                    <td><?php echo htmlspecialchars($monitor['disponibilidad']); ?></td>
                     <td class="acciones">
                         <div class="button-container">
                             <!-- Acción de eliminar -->
@@ -71,7 +75,7 @@ include 'includes/admin_header.php';
                                 <button type="submit" name="eliminar_usuario" onclick="return confirm('¿Estás seguro de que deseas eliminar este monitor? Esta acción no se puede deshacer.')" title="Eliminar definitivamente este monitor">Eliminar</button>
                             </form>
                             <!-- Acción de editar -->
-                            <form action="edit_usuario.php" method="GET" style="display:inline;">
+                            <form action="edit_monitor.php" method="GET" style="display:inline;">
                                 <input type="hidden" name="id_usuario" value="<?php echo $monitor['id_usuario']; ?>">
                                 <button type="submit" name="editar_usuario" title="Modificar el perfil de este monitor">Modificar Perfil</button>
                             </form>
@@ -80,12 +84,13 @@ include 'includes/admin_header.php';
                 </tr>
             <?php endforeach; ?>
         </table>
-    </main>
 
-    <?php
-    include 'includes/footer.php';
-    $conn->close();
-    ?>
+
+
+        <?php
+        include 'includes/footer.php';
+        $conn->close();
+        ?>
 </body>
 
 </html>
