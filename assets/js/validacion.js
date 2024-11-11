@@ -85,51 +85,46 @@ function valFormUsuario() {
 }
 
 
-function validarMonitor() {
+function validarFormularioEdicion(tipoFormulario) {
     const nombre = document.getElementById('nombre').value;
     const email = document.getElementById('email').value;
-    const experiencia = document.getElementById('experiencia').value;
-    const disponibilidad = document.getElementById('disponibilidad').value;
+    const experiencia = document.getElementById('experiencia') ? document.getElementById('experiencia').value : null;
+    const disponibilidad = document.getElementById('disponibilidad') ? document.getElementById('disponibilidad').value : null;
 
-    // Validación del campo de nombre: se asegura de que contenga al menos una letra
+    // Validación del nombre: debe contener al menos una letra
     const nombreRegex = /[a-zA-Z]/;
     if (!nombreRegex.test(nombre)) {
         alert("Por favor, ingresa un nombre válido con al menos una letra.");
         return false;
     }
 
-    // Validación del campo de email: verifica que no esté vacío
-    if (email.trim() === "") {
-        alert("Por favor, ingresa tu correo electrónico.");
-        return false;
-    }
-
-    // Validación del formato del email
+    // Validación del campo de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
         alert("Por favor, ingresa un correo electrónico válido.");
         return false;
     }
 
-    // Validación de experiencia: debe ser un número positivo
-    if (isNaN(experiencia) || experiencia < 0) {
-        alert("Por favor, ingresa un número válido para la experiencia (años). Puede ser cero o mayor.");
-        return false;
+    // Validación específica para 'monitor' - experiencia y disponibilidad
+    if (tipoFormulario === 'monitor') {
+        if (experiencia === null || isNaN(experiencia) || experiencia < 0) {
+            alert("Por favor, ingresa un número válido para la experiencia (años). Puede ser cero o mayor.");
+            return false;
+        }
+        if (disponibilidad === null || disponibilidad.trim() === "") {
+            alert("Por favor, selecciona la disponibilidad.");
+            return false;
+        }
     }
 
-    // Validación de disponibilidad: debe tener un valor seleccionado
-    if (disponibilidad.trim() === "") {
-        alert("Por favor, selecciona la disponibilidad.");
-        return false;
-    }
+    // Validación específica para 'miembro' - otros requisitos específicos podrían añadirse aquí
 
-    const mensajeConfirmacion = "Estás a punto de actualizar los datos del monitor.\n\n" +
-        "Esta acción no se puede deshacer. Asegúrate de que toda la información sea correcta " +
-        "antes de continuar.\n\n" +
-        "¿Deseas continuar con la actualización de los datos?";
-    const confirmar = confirm(mensajeConfirmacion);
-    return confirmar;
+    // Confirmación final para asegurarse
+    const mensajeConfirmacion = "Estás a punto de actualizar los datos del " + tipoFormulario + ".\n\n" +
+        "Esta acción no se puede deshacer. ¿Deseas continuar con la actualización de los datos?";
+    return confirm(mensajeConfirmacion);
 }
+
 
 
 

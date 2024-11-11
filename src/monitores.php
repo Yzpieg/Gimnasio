@@ -18,14 +18,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['eliminar_usuario']) &
     exit();
 }
 
-// Capturar el término de búsqueda, especialidad y los parámetros de ordenamiento
+// Capturar el término de búsqueda, especialidad, disponibilidad y los parámetros de ordenamiento
 $busqueda = $_GET['busqueda'] ?? '';
 $especialidad_filtro = $_GET['especialidad'] ?? '';
+$disponibilidad_filtro = $_GET['disponibilidad'] ?? '';
 $orden_columna = $_GET['orden'] ?? 'nombre';
 $orden_direccion = $_GET['direccion'] ?? 'ASC';
 
 // Obtener los monitores usando la función en monitor_functions.php
-$monitores = obtenerMonitores($conn, $busqueda, $orden_columna, $orden_direccion, $especialidad_filtro);
+$monitores = obtenerMonitores($conn, $busqueda, $orden_columna, $orden_direccion, $especialidad_filtro, $disponibilidad_filtro);
 
 // Obtener la lista de especialidades
 $especialidades = obtenerEspecialidades($conn);
@@ -59,6 +60,14 @@ include 'includes/admin_header.php';
                             <?php echo htmlspecialchars($especialidad['nombre']); ?>
                         </option>
                     <?php endforeach; ?>
+                </select>
+
+                <!-- Menú desplegable para buscar por disponibilidad -->
+                <label for="disponibilidad">Disponibilidad:</label>
+                <select name="disponibilidad" id="disponibilidad">
+                    <option value="">Cualquiera</option>
+                    <option value="Disponible" <?php echo ($disponibilidad_filtro === 'Disponible') ? 'selected' : ''; ?>>Disponible</option>
+                    <option value="No disponible" <?php echo ($disponibilidad_filtro === 'No disponible') ? 'selected' : ''; ?>>No disponible</option>
                 </select>
 
                 <button type="submit">Buscar</button>

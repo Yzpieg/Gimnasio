@@ -34,3 +34,50 @@ function obtenerNotificaciones($conn, $limit = 5)
     $stmt->close();
     return $notificaciones;
 }
+function agregarEspecialidad($conn, $nombre_especialidad)
+{
+    if (empty($nombre_especialidad)) {
+        return "Por favor, introduce un nombre de especialidad.";
+    }
+    $stmt = $conn->prepare("INSERT INTO especialidad (nombre) VALUES (?)");
+    $stmt->bind_param("s", $nombre_especialidad);
+    if ($stmt->execute()) {
+        $stmt->close();
+        return "Especialidad añadida exitosamente.";
+    } else {
+        $error = "Error al añadir la especialidad: " . $stmt->error;
+        $stmt->close();
+        return $error;
+    }
+}
+
+function editarEspecialidad($conn, $id_especialidad, $nombre_especialidad)
+{
+    if (empty($nombre_especialidad)) {
+        return "Por favor, introduce un nombre de especialidad.";
+    }
+    $stmt = $conn->prepare("UPDATE especialidad SET nombre = ? WHERE id_especialidad = ?");
+    $stmt->bind_param("si", $nombre_especialidad, $id_especialidad);
+    if ($stmt->execute()) {
+        $stmt->close();
+        return "Especialidad actualizada exitosamente.";
+    } else {
+        $error = "Error al actualizar la especialidad: " . $stmt->error;
+        $stmt->close();
+        return $error;
+    }
+}
+
+function eliminarEspecialidad($conn, $id_especialidad)
+{
+    $stmt = $conn->prepare("DELETE FROM especialidad WHERE id_especialidad = ?");
+    $stmt->bind_param("i", $id_especialidad);
+    if ($stmt->execute()) {
+        $stmt->close();
+        return "Especialidad eliminada exitosamente.";
+    } else {
+        $error = "Error al eliminar la especialidad: " . $stmt->error;
+        $stmt->close();
+        return $error;
+    }
+}

@@ -1,20 +1,9 @@
 <?php
 
 // Obtiene todos los monitores de la base de datos
-function obtenerMonitores($conn, $busqueda = '', $orden_columna = 'nombre', $orden_direccion = 'ASC', $especialidad_id = null)
+function obtenerMonitores($conn, $busqueda = '', $orden_columna = 'nombre', $orden_direccion = 'ASC', $especialidad_id = null, $disponibilidad = null)
 {
-    // Validar columnas y dirección para evitar inyecciones SQL
-    $columnas_validas = ['nombre', 'email', 'experiencia', 'disponibilidad'];
-    $direccion_valida = ['ASC', 'DESC'];
-
-    if (!in_array($orden_columna, $columnas_validas)) {
-        $orden_columna = 'nombre';
-    }
-    if (!in_array($orden_direccion, $direccion_valida)) {
-        $orden_direccion = 'ASC';
-    }
-
-    // Construir la consulta SQL
+    // Construcción inicial de la consulta SQL
     $sql = "SELECT u.id_usuario, u.nombre, u.email, m.experiencia, m.disponibilidad, 
                    GROUP_CONCAT(e.nombre SEPARATOR ', ') AS especialidades
             FROM usuario u
@@ -22,7 +11,7 @@ function obtenerMonitores($conn, $busqueda = '', $orden_columna = 'nombre', $ord
             LEFT JOIN monitor_especialidad me ON m.id_monitor = me.id_monitor
             LEFT JOIN especialidad e ON me.id_especialidad = e.id_especialidad";
 
-    // Agregar filtros de búsqueda si se proporcionan términos o especialidad
+    // Agregar filtros de búsqueda y disponibilidad
     $conditions = [];
     $params = [];
     $types = '';
@@ -37,6 +26,11 @@ function obtenerMonitores($conn, $busqueda = '', $orden_columna = 'nombre', $ord
         $conditions[] = "me.id_especialidad = ?";
         $params[] = $especialidad_id;
         $types .= 'i';
+    }
+    if (!empty($disponibilidad)) { // Solo agregar condición si disponibilidad tiene un valor
+        $conditions[] = "m.disponibilidad = ?";
+        $params[] = $disponibilidad;
+        $types .= 's';
     }
 
     if ($conditions) {
@@ -63,6 +57,7 @@ function obtenerMonitores($conn, $busqueda = '', $orden_columna = 'nombre', $ord
     $stmt->close();
     return $monitores;
 }
+
 
 
 

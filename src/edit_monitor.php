@@ -71,7 +71,7 @@ include 'includes/admin_header.php';
 
         <div class="form_container">
             <?php if ($monitor): ?>
-                <form method="POST" action="edit_monitor.php?id_usuario=<?php echo htmlspecialchars($id_usuario); ?>" onsubmit="return validarMonitor();">
+                <form method="POST" action="edit_monitor.php?id_usuario=<?php echo htmlspecialchars($id_usuario); ?>" onsubmit="return validarFormularioEdicion('monitor');">
 
 
                     <!-- Campo para editar el nombre -->

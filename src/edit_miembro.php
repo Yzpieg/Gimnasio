@@ -69,7 +69,7 @@ include 'includes/admin_header.php';
 
         <div class="form_container">
             <?php if ($miembro): ?>
-                <form method="POST" action="edit_miembro.php?id_usuario=<?php echo htmlspecialchars($id_usuario); ?>" onsubmit="habilitarFechaRegistro(); return validarFormulario();">
+                <form method="POST" action="edit_miembro.php?id_usuario=<?php echo htmlspecialchars($id_usuario); ?>" onsubmit="habilitarFechaRegistro(); return validarFormularioEdicion('miembro');">
 
                     <!-- Campo para editar el nombre -->
                     <label for="nombre">Nombre:</label>
@@ -143,4 +143,5 @@ include 'includes/admin_header.php';
             document.getElementById('fecha_registro').disabled = false;
         }
     </script>
+    <script src="../assets/js/validacion.js"></script>
 </body>
