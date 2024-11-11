@@ -85,6 +85,53 @@ function valFormUsuario() {
 }
 
 
+function validarMonitor() {
+    const nombre = document.getElementById('nombre').value;
+    const email = document.getElementById('email').value;
+    const experiencia = document.getElementById('experiencia').value;
+    const disponibilidad = document.getElementById('disponibilidad').value;
+
+    // Validación del campo de nombre: se asegura de que contenga al menos una letra
+    const nombreRegex = /[a-zA-Z]/;
+    if (!nombreRegex.test(nombre)) {
+        alert("Por favor, ingresa un nombre válido con al menos una letra.");
+        return false;
+    }
+
+    // Validación del campo de email: verifica que no esté vacío
+    if (email.trim() === "") {
+        alert("Por favor, ingresa tu correo electrónico.");
+        return false;
+    }
+
+    // Validación del formato del email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert("Por favor, ingresa un correo electrónico válido.");
+        return false;
+    }
+
+    // Validación de experiencia: debe ser un número positivo
+    if (isNaN(experiencia) || experiencia < 0) {
+        alert("Por favor, ingresa un número válido para la experiencia (años). Puede ser cero o mayor.");
+        return false;
+    }
+
+    // Validación de disponibilidad: debe tener un valor seleccionado
+    if (disponibilidad.trim() === "") {
+        alert("Por favor, selecciona la disponibilidad.");
+        return false;
+    }
+
+    const mensajeConfirmacion = "Estás a punto de actualizar los datos del monitor.\n\n" +
+        "Esta acción no se puede deshacer. Asegúrate de que toda la información sea correcta " +
+        "antes de continuar.\n\n" +
+        "¿Deseas continuar con la actualización de los datos?";
+    const confirmar = confirm(mensajeConfirmacion);
+    return confirmar;
+}
+
+
 
 
 

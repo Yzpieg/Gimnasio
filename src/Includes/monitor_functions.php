@@ -1,7 +1,7 @@
 <?php
 
 // Obtiene todos los monitores de la base de datos
-function obtenerMonitores($conn, $busqueda = '', $orden_columna = 'nombre', $orden_direccion = 'ASC')
+function obtenerMonitores($conn, $busqueda = '', $orden_columna = 'nombre', $orden_direccion = 'ASC', $especialidad_id = null)
 {
     // Validar columnas y dirección para evitar inyecciones SQL
     $columnas_validas = ['nombre', 'email', 'experiencia', 'disponibilidad'];
@@ -14,7 +14,7 @@ function obtenerMonitores($conn, $busqueda = '', $orden_columna = 'nombre', $ord
         $orden_direccion = 'ASC';
     }
 
-    // Construir la consulta SQL para obtener los monitores con sus especialidades
+    // Construir la consulta SQL
     $sql = "SELECT u.id_usuario, u.nombre, u.email, m.experiencia, m.disponibilidad, 
                    GROUP_CONCAT(e.nombre SEPARATOR ', ') AS especialidades
             FROM usuario u
@@ -22,9 +22,25 @@ function obtenerMonitores($conn, $busqueda = '', $orden_columna = 'nombre', $ord
             LEFT JOIN monitor_especialidad me ON m.id_monitor = me.id_monitor
             LEFT JOIN especialidad e ON me.id_especialidad = e.id_especialidad";
 
-    // Agregar filtro de búsqueda si se proporciona un término
+    // Agregar filtros de búsqueda si se proporcionan términos o especialidad
+    $conditions = [];
+    $params = [];
+    $types = '';
+
     if ($busqueda) {
-        $sql .= " WHERE u.nombre LIKE ? OR u.email LIKE ?";
+        $conditions[] = "(u.nombre LIKE ? OR u.email LIKE ?)";
+        $params[] = '%' . $busqueda . '%';
+        $params[] = '%' . $busqueda . '%';
+        $types .= 'ss';
+    }
+    if ($especialidad_id) {
+        $conditions[] = "me.id_especialidad = ?";
+        $params[] = $especialidad_id;
+        $types .= 'i';
+    }
+
+    if ($conditions) {
+        $sql .= " WHERE " . implode(" AND ", $conditions);
     }
 
     // Agregar agrupación y ordenamiento
@@ -32,11 +48,9 @@ function obtenerMonitores($conn, $busqueda = '', $orden_columna = 'nombre', $ord
 
     // Preparar y ejecutar la consulta
     $stmt = $conn->prepare($sql);
-    if ($busqueda) {
-        $busqueda_param = '%' . $busqueda . '%';
-        $stmt->bind_param("ss", $busqueda_param, $busqueda_param);
+    if ($params) {
+        $stmt->bind_param($types, ...$params);
     }
-
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -49,6 +63,7 @@ function obtenerMonitores($conn, $busqueda = '', $orden_columna = 'nombre', $ord
     $stmt->close();
     return $monitores;
 }
+
 
 
 
@@ -80,7 +95,7 @@ function eliminarMonitor($conn, $id_usuario)
 function obtenerMonitorPorID($conn, $id_usuario)
 {
     // Consulta para obtener los datos básicos del monitor
-    $sql = "SELECT m.id_monitor, u.id_usuario, u.nombre, u.email, m.especialidad, m.experiencia, m.disponibilidad
+    $sql = "SELECT m.id_monitor, u.id_usuario, u.nombre, u.email, m.experiencia, m.disponibilidad
             FROM monitor m
             INNER JOIN usuario u ON m.id_usuario = u.id_usuario
             WHERE u.id_usuario = ?";
@@ -96,7 +111,13 @@ function obtenerMonitorPorID($conn, $id_usuario)
         return null; // Monitor no encontrado
     }
 
-    // Consulta para obtener los entrenamientos (especialidades) asociados al monitor
+    // Asegurarse de que 'especialidad' esté definido
+    $monitor['especialidad'] = $monitor['especialidad'] ?? '';
+
+    // Inicializar especialidades como un array vacío
+    $monitor['especialidades'] = [];
+
+    // Consulta para obtener las especialidades asociadas al monitor
     $sql = "SELECT e.id_especialidad, e.nombre 
             FROM monitor_especialidad me
             INNER JOIN especialidad e ON me.id_especialidad = e.id_especialidad
@@ -106,18 +127,20 @@ function obtenerMonitorPorID($conn, $id_usuario)
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Almacenar las especialidades en un array
-    $entrenamientos = [];
+    // Almacenar las especialidades en el array
     while ($row = $result->fetch_assoc()) {
-        $entrenamientos[] = $row['id_especialidad'];
+        $monitor['especialidades'][] = [
+            'id_especialidad' => $row['id_especialidad'],
+            'nombre' => $row['nombre']
+        ];
     }
     $stmt->close();
 
-    // Agregar la lista de entrenamientos al array del monitor
-    $monitor['entrenamientos'] = $entrenamientos;
-
     return $monitor;
 }
+
+
+
 function actualizarMonitor($conn, $id_usuario, $nombre, $email, $especialidad, $experiencia, $disponibilidad)
 {
     try {
@@ -166,24 +189,31 @@ function actualizarEntrenamientosMonitor($conn, $id_monitor, $entrenamientos)
 }
 function obtenerEspecialidades($conn)
 {
-    $sql = "SELECT id_especialidad AS id, nombre FROM especialidad";
+    $sql = "SELECT id_especialidad, nombre FROM especialidad";
     $result = $conn->query($sql);
 
     $especialidades = [];
     while ($row = $result->fetch_assoc()) {
-        $especialidades[] = $row;
+        $especialidades[] = [
+            'id_especialidad' => $row['id_especialidad'], // Asegúrate de que esta clave exista
+            'nombre' => $row['nombre']
+        ];
     }
 
     return $especialidades;
 }
+
 function obtenerEntrenamientos($conn)
 {
-    $sql = "SELECT id_especialidad AS id, nombre FROM especialidad";
+    $sql = "SELECT id_especialidad, nombre FROM especialidad";
     $result = $conn->query($sql);
 
     $entrenamientos = [];
     while ($row = $result->fetch_assoc()) {
-        $entrenamientos[] = $row;
+        $entrenamientos[] = [
+            'id_especialidad' => $row['id_especialidad'],
+            'nombre' => $row['nombre']
+        ];
     }
 
     return $entrenamientos;

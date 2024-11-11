@@ -28,11 +28,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $disponibilidad = $_POST['disponibilidad'] ?? null;
     $entrenamientos_seleccionados = $_POST['entrenamiento'] ?? [];
 
-    if (!$nombre || !$email || !$experiencia || !$disponibilidad) {
+    if (!$nombre || !$email || $experiencia === null || $disponibilidad === null) {
         $mensaje = "Error: Todos los campos son obligatorios.";
         header("Location: edit_monitor.php?id_usuario=$id_usuario&mensaje=" . urlencode($mensaje));
         exit();
     }
+
 
     // Actualizar el monitor en la base de datos
     $resultado = actualizarMonitor($conn, $id_usuario, $nombre, $email, $monitor['especialidad'], $experiencia, $disponibilidad);
@@ -70,7 +71,8 @@ include 'includes/admin_header.php';
 
         <div class="form_container">
             <?php if ($monitor): ?>
-                <form method="POST" action="edit_monitor.php?id_usuario=<?php echo htmlspecialchars($id_usuario); ?>">
+                <form method="POST" action="edit_monitor.php?id_usuario=<?php echo htmlspecialchars($id_usuario); ?>" onsubmit="return validarMonitor();">
+
 
                     <!-- Campo para editar el nombre -->
                     <label for="nombre">Nombre:</label>
@@ -83,20 +85,17 @@ include 'includes/admin_header.php';
                     <!-- Apartado para mostrar las especialidades del monitor -->
                     <label>Especialidades:</label>
                     <div class="especialidades-lista">
-                        <?php if (!empty($monitor['entrenamientos'])): ?>
+                        <?php if (!empty($monitor['especialidades'])): ?>
                             <ul>
-                                <?php foreach ($monitor['entrenamientos'] as $entrenamiento_id): ?>
-                                    <?php
-                                    // Buscar el nombre de la especialidad en la lista de todas las especialidades
-                                    $nombre_entrenamiento = array_column($especialidades, 'nombre', 'id')[$entrenamiento_id] ?? 'Desconocido';
-                                    ?>
-                                    <li><?php echo htmlspecialchars($nombre_entrenamiento); ?></li>
+                                <?php foreach ($monitor['especialidades'] as $especialidad): ?>
+                                    <li><?php echo htmlspecialchars($especialidad['nombre']); ?></li>
                                 <?php endforeach; ?>
                             </ul>
                         <?php else: ?>
                             <p>No hay especialidades asignadas.</p>
                         <?php endif; ?>
                     </div>
+
 
                     <!-- Campo para editar la experiencia -->
                     <label for="experiencia">Experiencia (años):</label>
@@ -110,22 +109,24 @@ include 'includes/admin_header.php';
                     </select>
 
                     <!-- Campo para seleccionar múltiples entrenamientos con checkboxes -->
-                    <label>Entrenamientos:</label>
+                    <label>Asignar especialidad:</label>
                     <div class="entrenamientos-checkboxes">
                         <?php foreach ($entrenamientos as $entrenamiento): ?>
                             <div class="entrenamiento-item">
-                                <label for="entrenamiento_<?php echo $entrenamiento['id']; ?>">
+                                <label for="entrenamiento_<?php echo htmlspecialchars($entrenamiento['id_especialidad']); ?>">
                                     <?php echo htmlspecialchars($entrenamiento['nombre']); ?>
                                 </label>
                                 <input
                                     type="checkbox"
-                                    id="entrenamiento_<?php echo $entrenamiento['id']; ?>"
+                                    id="entrenamiento_<?php echo htmlspecialchars($entrenamiento['id_especialidad']); ?>"
                                     name="entrenamiento[]"
-                                    value="<?php echo $entrenamiento['id']; ?>"
-                                    <?php echo in_array($entrenamiento['id'], $monitor['entrenamientos']) ? 'checked' : ''; ?>>
+                                    value="<?php echo htmlspecialchars($entrenamiento['id_especialidad']); ?>"
+                                    <?php echo isset($monitor['especialidades']) && in_array($entrenamiento['id_especialidad'], array_column($monitor['especialidades'], 'id_especialidad')) ? 'checked' : ''; ?>>
                             </div>
                         <?php endforeach; ?>
                     </div>
+
+
 
                     <!-- Botón para guardar los cambios -->
                     <button type="submit">Guardar Cambios</button>
@@ -137,6 +138,8 @@ include 'includes/admin_header.php';
     </main>
 
     <?php include 'includes/footer.php'; ?>
+    <script src="../assets/js/validacion.js"></script>
+
 </body>
 
 </html>

@@ -190,13 +190,6 @@ function crearMonitor($conn, $id_usuario, $pagina = "usuarios.php")
     $stmt->bind_param("i", $id_usuario);
     $stmt->execute();
     $stmt->close();
-
-    // Asignar una especialidad inicial (ejemplo: Yoga, id_especialidad = 1)
-    $id_especialidad = 1;
-    $stmt = $conn->prepare("INSERT INTO monitor_especialidad (id_monitor, id_especialidad) VALUES (?, ?)");
-    $stmt->bind_param("ii", $id_monitor, $id_especialidad);
-    $stmt->execute();
-    $stmt->close();
 }
 
 
