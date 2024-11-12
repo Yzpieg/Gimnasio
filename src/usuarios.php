@@ -7,7 +7,7 @@ verificarAdmin();
 $conn = obtenerConexion();
 
 // Llamada a la función principal para manejar acciones
-manejarAccionUsuario($conn,);
+manejarAccionUsuario($conn);
 
 // Capturar el término de búsqueda y los parámetros de ordenamiento
 $busqueda = $_GET['busqueda'] ?? '';

@@ -24,23 +24,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = $_POST['nombre'] ?? null;
     $email = $_POST['email'] ?? null;
     $fecha_registro = $_POST['fecha_registro'] ?? null;
-    $id_membresia = $_POST['id_membresia'] ?? null;
+    $id_membresia_nueva = $_POST['id_membresia'] ?? null;
     $entrenamientos_seleccionados = $_POST['entrenamiento'] ?? [];
 
-    if (!$nombre || !$email || !$fecha_registro || !$id_membresia) {
+    if (!$nombre || !$email || !$fecha_registro || !$id_membresia_nueva) {
         $mensaje = "Error: Todos los campos son obligatorios.";
         header("Location: edit_miembro.php?id_usuario=$id_usuario&mensaje=" . urlencode($mensaje));
         exit();
     }
 
-    // Actualizar el miembro en la base de datos con la membresía seleccionada
-    $resultado = actualizarMiembro($conn, $id_usuario, $nombre, $email, $fecha_registro, $id_membresia);
+    // Actualizar el miembro en la base de datos con la nueva membresía seleccionada
+    $resultado = actualizarMiembro($conn, $id_usuario, $nombre, $email, $fecha_registro, $id_membresia_nueva);
 
     if ($resultado['success']) {
         $id_miembro = obtenerIdMiembroPorUsuario($conn, $id_usuario);
         if ($id_miembro) {
             actualizarEntrenamientosMiembro($conn, $id_miembro, $entrenamientos_seleccionados);
-            $mensaje = "Miembro actualizado correctamente.";
+
+            // Comprobar si el ID de membresía ha cambiado
+            if ($miembro['id_membresia'] !== $id_membresia_nueva) {
+                // Registrar el cambio de membresía en miembro_membresía
+                $stmt = $conn->prepare("SELECT precio, duracion FROM membresia WHERE id_membresia = ?");
+                $stmt->bind_param("i", $id_membresia_nueva);
+                $stmt->execute();
+                $stmt->bind_result($precio, $duracion);
+
+                if ($stmt->fetch()) {
+                    $fecha_inicio = date("Y-m-d");
+                    $fecha_fin = date("Y-m-d", strtotime("+$duracion months"));
+                    $stmt->close();
+
+                    // Insertar en miembro_membresía
+                    $insert_stmt = $conn->prepare("INSERT INTO miembro_membresia (id_miembro, id_membresia, monto_pagado, fecha_inicio, fecha_fin, estado) VALUES (?, ?, ?, ?, ?, 'activa')");
+                    $insert_stmt->bind_param("iisss", $id_miembro, $id_membresia_nueva, $precio, $fecha_inicio, $fecha_fin);
+
+                    if ($insert_stmt->execute()) {
+                        $mensaje = "Miembro actualizado correctamente y nueva membresía registrada.";
+                    } else {
+                        $mensaje = "Miembro actualizado, pero hubo un error al registrar la membresía: " . $insert_stmt->error;
+                    }
+                    $insert_stmt->close();
+                } else {
+                    $stmt->close();
+                    $mensaje = "Error: No se pudo encontrar la información de la membresía seleccionada.";
+                }
+            } else {
+                $mensaje = "Miembro actualizado correctamente.";
+            }
 
             // Volver a cargar los datos del miembro después de actualizar
             $miembro = obtenerMiembroPorID($conn, $id_usuario);
@@ -54,6 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 include 'includes/admin_header.php';
 ?>
+
 
 
 <body>
@@ -94,7 +125,7 @@ include 'includes/admin_header.php';
                     <select id="tipo_membresia" name="id_membresia" required>
                         <?php foreach ($membresias as $membresia): ?>
                             <option value="<?php echo htmlspecialchars($membresia['id_membresia']); ?>"
-                                <?php echo (isset($miembro['id_membresia']) && $membresia['id_membresia'] === $miembro['id_membresia']) ? 'selected' : ''; ?>>
+                                <?php echo (isset($miembro['id_membresia']) && $membresia['id_membresia'] == $miembro['id_membresia']) ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($membresia['tipo']); ?>
                                 - <?php echo "$" . htmlspecialchars($membresia['precio']); ?>
                                 (<?php echo htmlspecialchars($membresia['duracion']) . " meses"; ?>)

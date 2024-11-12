@@ -125,3 +125,35 @@ function eliminarMembresia($conn, $id_membresia)
         return $error;
     }
 }
+function asignarMembresiaAlMiembro($conn, $id_miembro, $id_membresia)
+{
+    // Obtener información de la membresía para calcular la fecha de expiración y monto pagado
+    $stmt = $conn->prepare("SELECT precio, duracion FROM membresia WHERE id_membresia = ?");
+    $stmt->bind_param("i", $id_membresia);
+    $stmt->execute();
+    $stmt->bind_result($precio, $duracion);
+
+    if ($stmt->fetch()) {
+        // Calcular fechas
+        $fecha_inicio = date("Y-m-d");
+        $fecha_fin = date("Y-m-d", strtotime("+$duracion months"));
+
+        // Insertar el registro en la tabla miembro_membresía
+        $stmt->close();
+
+        $insert_stmt = $conn->prepare("INSERT INTO miembro_membresía (id_miembro, id_membresia, monto_pagado, fecha_inicio, fecha_fin, estado) VALUES (?, ?, ?, ?, ?, 'activa')");
+        $insert_stmt->bind_param("iisss", $id_miembro, $id_membresia, $precio, $fecha_inicio, $fecha_fin);
+
+        if ($insert_stmt->execute()) {
+            $insert_stmt->close();
+            return "Membresía asignada exitosamente.";
+        } else {
+            $error = "Error al asignar la membresía: " . $insert_stmt->error;
+            $insert_stmt->close();
+            return $error;
+        }
+    } else {
+        $stmt->close();
+        return "La membresía especificada no existe.";
+    }
+}
