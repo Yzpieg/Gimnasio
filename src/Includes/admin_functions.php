@@ -81,3 +81,47 @@ function eliminarEspecialidad($conn, $id_especialidad)
         return $error;
     }
 }
+
+// admin_functions.php
+
+function agregarMembresia($conn, $tipo, $precio, $duracion, $beneficios)
+{
+    $stmt = $conn->prepare("INSERT INTO membresia (tipo, precio, duracion, beneficios) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("sdis", $tipo, $precio, $duracion, $beneficios);
+    if ($stmt->execute()) {
+        $stmt->close();
+        return "Membresía añadida exitosamente.";
+    } else {
+        $error = "Error al añadir la membresía: " . $stmt->error;
+        $stmt->close();
+        return $error;
+    }
+}
+
+function editarMembresia($conn, $id_membresia, $tipo, $precio, $duracion, $beneficios)
+{
+    $stmt = $conn->prepare("UPDATE membresia SET tipo = ?, precio = ?, duracion = ?, beneficios = ? WHERE id_membresia = ?");
+    $stmt->bind_param("sdiss", $tipo, $precio, $duracion, $beneficios, $id_membresia);
+    if ($stmt->execute()) {
+        $stmt->close();
+        return "Membresía actualizada exitosamente.";
+    } else {
+        $error = "Error al actualizar la membresía: " . $stmt->error;
+        $stmt->close();
+        return $error;
+    }
+}
+
+function eliminarMembresia($conn, $id_membresia)
+{
+    $stmt = $conn->prepare("DELETE FROM membresia WHERE id_membresia = ?");
+    $stmt->bind_param("i", $id_membresia);
+    if ($stmt->execute()) {
+        $stmt->close();
+        return "Membresía eliminada exitosamente.";
+    } else {
+        $error = "Error al eliminar la membresía: " . $stmt->error;
+        $stmt->close();
+        return $error;
+    }
+}

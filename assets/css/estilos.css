@@ -67,6 +67,128 @@ main {
     text-align: left;
 }
 
+.form_container_large {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+    /* Centra el contenido del contenedor */
+}
+
+/* Centrar solo el título */
+.form_container_large h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Formulario para añadir una nueva membresía */
+.membresia-form {
+    text-align: left;
+    padding: 20px;
+    background-color: #f1f1f1;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+/* Campo de texto grande y legible para 'beneficios' en el formulario de añadir membresía */
+.membresia-form textarea#beneficios {
+    width: 100%;
+    /* Ocupa todo el ancho disponible */
+    min-height: 100px;
+    /* Aumenta la altura mínima */
+    font-size: 18px;
+    /* Tamaño de fuente mayor para legibilidad */
+    padding: 12px;
+    /* Espaciado interno */
+    resize: vertical;
+    margin-top: 10px;
+    /* Espacio con el campo superior */
+}
+
+/* Botón 'Añadir' más compacto */
+.membresia-form button[type="submit"] {
+    padding: 10px 15px;
+    background-color: #3aafa9;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: auto;
+    /* No ocupa todo el ancho */
+}
+
+/* Contenedor de cada membresía existente */
+.membresia-item {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* Remover puntos de la lista y añadir espacio y sombreado alterno */
+.membresias-lista {
+    list-style-type: none;
+    padding: 0;
+}
+
+.membresias-lista li {
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+/* Sombras alternas */
+.membresias-lista li:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.membresias-lista li:nth-child(even) {
+    background-color: #e0e0e0;
+}
+
+/* Campos de formulario: ancho y altura aumentados */
+.membresia-item input[type="text"],
+.membresia-item input[type="number"],
+.membresia-item textarea {
+    width: 20%;
+    min-width: 180px;
+    max-width: 250px;
+    padding: 12px 15px;
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+/* Campo de texto para 'beneficios' en cada membresía existente */
+.membresia-item textarea {
+    width: 100%;
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Botones de edición y eliminación en línea */
+.membresia-botones {
+    display: flex;
+    gap: 10px;
+}
+
+.membresia-botones button {
+    padding: 12px 20px;
+    background-color: #3aafa9;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    width: auto;
+}
+
+
+
+
+
+
+
 .form_container h3 {
     font-size: 20px;
     margin-bottom: 15px;
