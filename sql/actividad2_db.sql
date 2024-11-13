@@ -138,6 +138,14 @@ CREATE TABLE IF NOT EXISTS rol_permiso (
     descripcion TEXT,
     UNIQUE (rol, permiso)
 );
+CREATE TABLE membresia_entrenamiento (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_membresia INT,
+    id_entrenamiento INT,
+    FOREIGN KEY (id_membresia) REFERENCES membresia(id_membresia) ON DELETE CASCADE,
+    FOREIGN KEY (id_entrenamiento) REFERENCES especialidad(id_especialidad) ON DELETE CASCADE
+);
+
 
 -- Insertar especialidades de ejemplo
 INSERT INTO especialidad (nombre) VALUES ('Yoga'), ('Pilates'), ('Cardio'), ('Pesas'), ('Entrenamiento Funcional');

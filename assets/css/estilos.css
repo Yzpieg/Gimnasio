@@ -28,9 +28,9 @@ header {
 
 header h1 {
     font-size: 24px;
-    margin-bottom: 10px;
 }
 
+/* Estilo para enlaces de navegación y el botón de cierre de sesión */
 header nav a,
 header nav .logout-link {
     color: #fff;
@@ -41,12 +41,14 @@ header nav .logout-link {
     border: none;
     cursor: pointer;
     padding: 0;
+    font-family: inherit;
 }
 
 header nav a:hover,
 header nav .logout-link:hover {
     color: #2b7a78;
 }
+
 
 /* Main Content */
 main {
@@ -69,13 +71,9 @@ main {
 
 .form_container_large {
     max-width: 1600px;
-    margin: 0 auto;
     padding: 20px;
-    text-align: center;
-    /* Centra el contenido del contenedor */
 }
 
-/* Centrar solo el título */
 .form_container_large h2 {
     text-align: center;
     margin-bottom: 20px;
@@ -83,39 +81,30 @@ main {
 
 /* Formulario para añadir una nueva membresía */
 .membresia-form {
-    text-align: left;
     padding: 20px;
     background-color: #f1f1f1;
     border-radius: 8px;
     margin-bottom: 30px;
+    max-width: 500px;
+    margin: 0 auto;
 }
 
-/* Campo de texto grande y legible para 'beneficios' en el formulario de añadir membresía */
 .membresia-form textarea#beneficios {
     width: 100%;
-    /* Ocupa todo el ancho disponible */
-    min-height: 100px;
-    /* Aumenta la altura mínima */
-    font-size: 18px;
-    /* Tamaño de fuente mayor para legibilidad */
-    padding: 12px;
-    /* Espaciado interno */
+    min-height: 80px;
+    font-size: 16px;
+    padding: 8px;
     resize: vertical;
-    margin-top: 10px;
-    /* Espacio con el campo superior */
 }
 
-/* Botón 'Añadir' más compacto */
 .membresia-form button[type="submit"] {
-    padding: 10px 15px;
+    padding: 8px 15px;
+    font-size: 14px;
     background-color: #3aafa9;
     color: #fff;
-    font-size: 16px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    width: auto;
-    /* No ocupa todo el ancho */
 }
 
 /* Contenedor de cada membresía existente */
@@ -124,10 +113,8 @@ main {
     flex-wrap: wrap;
     gap: 15px;
     align-items: center;
-    justify-content: flex-start;
 }
 
-/* Remover puntos de la lista y añadir espacio y sombreado alterno */
 .membresias-lista {
     list-style-type: none;
     padding: 0;
@@ -137,35 +124,29 @@ main {
     margin-bottom: 15px;
     padding: 15px;
     border-radius: 8px;
+    background-color: #f1f1f1;
 }
 
-/* Sombras alternas */
-.membresias-lista li:nth-child(odd) {
-    background-color: #f9f9f9;
-}
-
-.membresias-lista li:nth-child(even) {
-    background-color: #e0e0e0;
-}
-
-/* Campos de formulario: ancho y altura aumentados */
 .membresia-item input[type="text"],
 .membresia-item input[type="number"],
 .membresia-item textarea {
     width: 20%;
     min-width: 180px;
     max-width: 250px;
-    padding: 12px 15px;
-    font-size: 18px;
-    margin-right: 10px;
+    padding: 8px;
+    font-size: 16px;
 }
 
 /* Campo de texto para 'beneficios' en cada membresía existente */
-.membresia-item textarea {
+.membresia-item textarea[name="beneficios"] {
     width: 100%;
-    min-height: 100px;
+    /* Ocupa el ancho completo del contenedor */
+    min-height: 80px;
+    /* Aumenta la altura mínima para mejor visibilidad */
     resize: vertical;
+    /* Permite ajustar la altura, pero no el ancho */
 }
+
 
 /* Botones de edición y eliminación en línea */
 .membresia-botones {
@@ -174,25 +155,30 @@ main {
 }
 
 .membresia-botones button {
-    padding: 12px 20px;
+    padding: 8px 15px;
+    font-size: 14px;
     background-color: #3aafa9;
     color: #fff;
-    font-size: 16px;
     border: none;
     cursor: pointer;
-    width: auto;
 }
 
+/* Estilos para los checkboxes en membresías editables */
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
 
-
-
-
-
-
-.form_container h3 {
-    font-size: 20px;
-    margin-bottom: 15px;
-    color: #3aafa9;
+.checkbox-group label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: auto;
+    font-size: 14px;
+    padding: 4px 8px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
 }
 
 .form_container label {
@@ -206,7 +192,6 @@ main {
 .form_container select {
     width: 100%;
     padding: 10px;
-    margin-bottom: 15px;
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 16px;
@@ -221,62 +206,13 @@ main {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
 .form_container button[type="submit"]:hover {
     background-color: #2b7a78;
 }
 
-.button-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    /* Centra los botones en la celda */
-    margin-top: 20px;
-}
-
-
-.button-container a,
-.button-container button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #3aafa9;
-    color: #fff;
-    font-size: 16px;
-    text-decoration: none;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.button-container a:hover,
-.button-container button:hover {
-    background-color: #2b7a78;
-}
-
-.image-container {
-    text-align: center;
-    margin: 20px auto;
-}
-
-.gym-image {
-    max-width: 50%;
-
-    width: 100%;
-
-    height: auto;
-
-    border-radius: 8px;
-
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-
-}
-
-
-/* Error and Confirmation Messages */
+/* Messages */
 .mensaje-error {
     color: #e74c3c;
     font-weight: bold;
@@ -309,63 +245,41 @@ footer p {
     margin: 0;
 }
 
+/* Table */
 table {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
 }
 
-
-td {
-    padding: 12px 20px;
-    /* Espacio interior para aumentar separación horizontal */
-    border-bottom: 1px solid #ddd;
-    /* Línea divisoria */
-    text-align: center;
-    /* Alineación de texto a la izquierda */
-}
-
-td.acciones {
-    text-align: center;
-    /* Asegura que el contenido de la celda de acciones esté centrado */
-    vertical-align: middle;
-    /* Centra verticalmente en caso de que haya más contenido */
-}
-
+td,
 th {
     padding: 12px 20px;
     border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+th {
     background-color: #3aafa9;
     color: #fff;
-    font-weight: bold;
-    text-align: center;
 }
 
 tr:nth-child(even) {
     background-color: #f9f9f9;
-    /* Fondo alternado para mayor claridad */
 }
 
 tr:hover {
     background-color: #f1f1f1;
-    /* Fondo al pasar el cursor */
 }
 
-/* Mantener el estilo de los enlaces dentro de th */
 th a {
     color: inherit;
-    /* Usa el color blanco del th */
     text-decoration: none;
-    /* Elimina el subrayado */
-    font-weight: bold;
-    /* Aplica el grosor de texto del th */
 }
 
 th a:hover {
     text-decoration: underline;
-    /* Subraya solo al pasar el ratón, si lo prefieres */
     color: #ddd;
-    /* Cambia ligeramente el color al pasar el ratón */
 }
 
 .entrenamientos-checkboxes {
@@ -375,36 +289,61 @@ th a:hover {
 }
 
 .entrenamiento-item {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    /* Nombre ocupa más espacio, checkbox ajustado a la derecha */
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-}
-
-.entrenamiento-item label {
-    text-align: left;
-    /* Alinea el texto a la izquierda */
-}
-
-.entrenamientos-checkboxes .entrenamiento-item:nth-child(odd) {
-    background-color: #f9f9f9;
-    /* Color de fondo claro para los elementos impares */
-}
-
-.entrenamientos-checkboxes .entrenamiento-item:nth-child(even) {
-    background-color: #e0e0e0;
-    /* Color de fondo más oscuro para los elementos pares */
-}
-
-.entrenamiento-item {
     padding: 5px;
     border-radius: 5px;
+    background-color: #f1f1f1;
+}
+
+/* Botones de acciones generales */
+.button-container button,
+.membresia-form button[type="submit"],
+.membresia-botones button {
+    padding: 10px 15px;
+    background-color: #3aafa9;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover para los botones de acciones */
+.button-container button:hover,
+.membresia-form button[type="submit"]:hover,
+.membresia-botones button:hover {
+    background-color: #2b7a78;
+}
+
+/* Alineación centrada de botones en formularios */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Estilo específico para botones desactivados */
+.btn-disabled {
+    background-color: #e0e0e0 !important;
+    /* Fondo gris más claro */
+    color: #999 !important;
+    /* Texto gris suave */
+    cursor: not-allowed !important;
+    /* Cursor de prohibido */
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2) !important;
+    /* Sombra interna más sutil */
+    border: 1px solid #b3b3b3 !important;
+    /* Borde gris suave */
+    opacity: 0.8 !important;
+    /* Opacidad ligeramente menor */
 }
 
 
 
-
-/* Responsive Design */
 @media (max-width: 600px) {
     header h1 {
         font-size: 20px;

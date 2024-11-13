@@ -84,12 +84,24 @@ function eliminarEspecialidad($conn, $id_especialidad)
 
 // admin_functions.php
 
-function agregarMembresia($conn, $tipo, $precio, $duracion, $beneficios)
+function agregarMembresia($conn, $tipo, $precio, $duracion, $beneficios, $entrenamientos = [])
 {
     $stmt = $conn->prepare("INSERT INTO membresia (tipo, precio, duracion, beneficios) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("sdis", $tipo, $precio, $duracion, $beneficios);
     if ($stmt->execute()) {
+        $id_membresia = $conn->insert_id;
         $stmt->close();
+
+        // Insertar los entrenamientos seleccionados
+        if (!empty($entrenamientos)) {
+            $stmt = $conn->prepare("INSERT INTO membresia_entrenamiento (id_membresia, id_entrenamiento) VALUES (?, ?)");
+            foreach ($entrenamientos as $id_entrenamiento) {
+                $stmt->bind_param("ii", $id_membresia, $id_entrenamiento);
+                $stmt->execute();
+            }
+            $stmt->close();
+        }
+
         return "Membresía añadida exitosamente.";
     } else {
         $error = "Error al añadir la membresía: " . $stmt->error;
@@ -98,12 +110,29 @@ function agregarMembresia($conn, $tipo, $precio, $duracion, $beneficios)
     }
 }
 
-function editarMembresia($conn, $id_membresia, $tipo, $precio, $duracion, $beneficios)
+
+function editarMembresia($conn, $id_membresia, $tipo, $precio, $duracion, $beneficios, $entrenamientos = [])
 {
     $stmt = $conn->prepare("UPDATE membresia SET tipo = ?, precio = ?, duracion = ?, beneficios = ? WHERE id_membresia = ?");
     $stmt->bind_param("sdiss", $tipo, $precio, $duracion, $beneficios, $id_membresia);
     if ($stmt->execute()) {
         $stmt->close();
+
+        // Eliminar entrenamientos antiguos y agregar los nuevos
+        $stmt = $conn->prepare("DELETE FROM membresia_entrenamiento WHERE id_membresia = ?");
+        $stmt->bind_param("i", $id_membresia);
+        $stmt->execute();
+        $stmt->close();
+
+        if (!empty($entrenamientos)) {
+            $stmt = $conn->prepare("INSERT INTO membresia_entrenamiento (id_membresia, id_entrenamiento) VALUES (?, ?)");
+            foreach ($entrenamientos as $id_entrenamiento) {
+                $stmt->bind_param("ii", $id_membresia, $id_entrenamiento);
+                $stmt->execute();
+            }
+            $stmt->close();
+        }
+
         return "Membresía actualizada exitosamente.";
     } else {
         $error = "Error al actualizar la membresía: " . $stmt->error;
@@ -111,6 +140,7 @@ function editarMembresia($conn, $id_membresia, $tipo, $precio, $duracion, $benef
         return $error;
     }
 }
+
 
 function eliminarMembresia($conn, $id_membresia)
 {
