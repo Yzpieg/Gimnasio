@@ -211,3 +211,16 @@ function obtenerIdMiembroPorUsuario($conn, $id_usuario)
     $stmt->close();
     return $miembro['id_miembro'] ?? null;
 }
+function obtenerFechasMembresiaActiva($conn, $id_miembro)
+{
+    $query = "SELECT fecha_inicio, fecha_fin 
+              FROM miembro_membresia 
+              WHERE id_miembro = ? AND estado = 'activa' 
+              ORDER BY fecha_inicio DESC LIMIT 1";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $id_miembro);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    return $result->fetch_assoc();
+}

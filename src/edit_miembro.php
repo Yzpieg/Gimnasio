@@ -12,6 +12,13 @@ if (!isset($_GET['id_usuario'])) {
 
 $id_usuario = $_GET['id_usuario'];
 $miembro = obtenerMiembroPorID($conn, $id_usuario);
+// Obtener la membresía activa y sus fechas para el miembro
+$id_miembro = obtenerIdMiembroPorUsuario($conn, $id_usuario);
+$fechas_membresia = obtenerFechasMembresiaActiva($conn, $id_miembro);
+
+$fecha_inicio = $fechas_membresia['fecha_inicio'] ?? null;
+$fecha_fin = $fechas_membresia['fecha_fin'] ?? null;
+
 
 // Asegurarse de que el array 'entrenamientos' esté definido aunque esté vacío
 $miembro['entrenamientos'] = $miembro['entrenamientos'] ?? [];
@@ -26,6 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fecha_registro = $_POST['fecha_registro'] ?? null;
     $id_membresia_nueva = $_POST['id_membresia'] ?? null;
     $entrenamientos_seleccionados = $_POST['entrenamiento'] ?? [];
+    $fecha_inicio_nueva = $_POST['fecha_inicio'] ?? null;
+    $fecha_fin_nueva = $_POST['fecha_fin'] ?? null;
 
     if (!$nombre || !$email || !$fecha_registro || !$id_membresia_nueva) {
         $mensaje = "Error: Todos los campos son obligatorios.";
@@ -43,7 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Comprobar si el ID de membresía ha cambiado
             if ($miembro['id_membresia'] !== $id_membresia_nueva) {
-                // Registrar el cambio de membresía en miembro_membresía
                 $stmt = $conn->prepare("SELECT precio, duracion FROM membresia WHERE id_membresia = ?");
                 $stmt->bind_param("i", $id_membresia_nueva);
                 $stmt->execute();
@@ -72,7 +80,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $mensaje = "Miembro actualizado correctamente.";
             }
 
-            // Volver a cargar los datos del miembro después de actualizar
+            // Actualizar las fechas de inicio y fin de la membresía activa si fueron modificadas
+            if ($fecha_inicio_nueva && $fecha_fin_nueva) {
+                $query_update_fechas = "UPDATE miembro_membresia SET fecha_inicio = ?, fecha_fin = ? WHERE id_miembro = ? AND estado = 'activa'";
+                $stmt_update_fechas = $conn->prepare($query_update_fechas);
+                $stmt_update_fechas->bind_param("ssi", $fecha_inicio_nueva, $fecha_fin_nueva, $id_miembro);
+
+                if ($stmt_update_fechas->execute()) {
+                    $mensaje .= " Fechas de la membresía actualizadas correctamente.";
+                } else {
+                    $mensaje .= " Error al actualizar las fechas de la membresía: " . $stmt_update_fechas->error;
+                }
+                $stmt_update_fechas->close();
+            }
+
+            // Recargar las fechas de inicio y fin actualizadas
+            $fechas_membresia = obtenerFechasMembresiaActiva($conn, $id_miembro);
+            $fecha_inicio = $fechas_membresia['fecha_inicio'] ?? null;
+            $fecha_fin = $fechas_membresia['fecha_fin'] ?? null;
+
             $miembro = obtenerMiembroPorID($conn, $id_usuario);
         } else {
             $mensaje = "Error: Miembro no encontrado.";
@@ -81,6 +107,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mensaje = $resultado['message'];
     }
 }
+
+
 
 include 'includes/admin_header.php';
 ?>
@@ -132,6 +160,13 @@ include 'includes/admin_header.php';
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    <!-- Campo para editar la fecha de inicio de la membresía -->
+                    <label for="fecha_inicio">Fecha de Inicio de la Membresía:</label>
+                    <input type="date" id="fecha_inicio" name="fecha_inicio" value="<?php echo htmlspecialchars($fecha_inicio); ?>" required aria-label="Fecha de inicio de la membresía">
+
+                    <!-- Campo para editar la fecha de fin de la membresía -->
+                    <label for="fecha_fin">Fecha de Fin de la Membresía:</label>
+                    <input type="date" id="fecha_fin" name="fecha_fin" value="<?php echo htmlspecialchars($fecha_fin); ?>" required aria-label="Fecha de fin de la membresía">
 
                     <!-- Campo para seleccionar múltiples entrenamientos con checkboxes -->
                     <label>Entrenamientos:</label>
