@@ -25,7 +25,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     actualizarDatosUsuario($conn, $id_usuario, $nuevo_nombre, $nuevo_telefono, $nueva_contrasenya, "usuario.php");
 }
 
+// Consulta para obtener las membresías con sus entrenamientos asociados
+$query = "
+    SELECT m.id_membresia, m.tipo, m.precio, m.duracion, m.beneficios, e.nombre AS entrenamiento
+    FROM membresia m
+    LEFT JOIN membresia_entrenamiento me ON m.id_membresia = me.id_membresia
+    LEFT JOIN especialidad e ON me.id_entrenamiento = e.id_especialidad
+    ORDER BY m.id_membresia
+";
 
+$result = $conn->query($query);
+$membresias = [];
+
+// Organizar los entrenamientos por membresía en un arreglo
+while ($row = $result->fetch_assoc()) {
+    $membresia_id = $row['id_membresia'];
+    if (!isset($membresias[$membresia_id])) {
+        $membresias[$membresia_id] = [
+            'tipo' => $row['tipo'],
+            'precio' => $row['precio'],
+            'duracion' => $row['duracion'],
+            'beneficios' => $row['beneficios'],
+            'entrenamientos' => []
+        ];
+    }
+    if ($row['entrenamiento']) {
+        $membresias[$membresia_id]['entrenamientos'][] = $row['entrenamiento'];
+    }
+}
 $conn->close();
 ?>
 
@@ -42,14 +69,12 @@ $conn->close();
 <body>
     <h2>Perfil del Usuario</h2>
 
-    <!-- Mostrar mensaje de confirmación si los datos se actualizaron correctamente -->
     <?php if (isset($_GET['mensaje'])): ?>
         <div class="mensaje-confirmacion">
             <p><?php echo htmlspecialchars($_GET['mensaje']); ?></p>
         </div>
     <?php endif; ?>
 
-    <!-- Formulario para que el usuario actualice sus datos personales -->
     <div class="form_container">
         <form action="usuario.php" method="POST" onsubmit="return valFormUsuario();">
             <label for="nombre">Nombre:</label>
@@ -70,13 +95,49 @@ $conn->close();
             <button type="submit">Actualizar Datos</button>
         </form>
     </div>
+
+    <h1>Elige tu Membresía</h1>
+    <div class="form_container">
+        <?php foreach ($membresias as $id => $membresia): ?>
+            <div class="membresia-card">
+                <h2><?php echo htmlspecialchars($membresia['tipo']); ?></h2>
+                <p>Precio: <?php echo htmlspecialchars($membresia['precio']); ?> €</p>
+                <p>Duración: <?php echo htmlspecialchars($membresia['duracion']); ?> mes(es)</p>
+                <p>Beneficios: <?php echo htmlspecialchars($membresia['beneficios']); ?></p>
+
+                <h3>Entrenamientos Incluidos:</h3>
+                <ul>
+                    <?php if (!empty($membresia['entrenamientos'])): ?>
+                        <?php foreach ($membresia['entrenamientos'] as $entrenamiento): ?>
+                            <li><?php echo htmlspecialchars($entrenamiento); ?></li>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <li>No incluye entrenamientos específicos.</li>
+                    <?php endif; ?>
+                </ul>
+
+                <form action="proceso_pago.php" method="POST">
+                    <input type="hidden" name="id_membresia" value="<?php echo $id; ?>">
+                    <label for="metodo_pago">Método de Pago:</label>
+                    <select name="metodo_pago" id="metodo_pago" required>
+                        <option value="tarjeta">Tarjeta</option>
+                        <option value="efectivo">Efectivo</option>
+                        <option value="transferencia">Transferencia</option>
+                        <option value="Paypal">Paypal</option>
+                        <option value="Bizum">Bizum</option>
+                    </select>
+                    <button type="submit">Elegir Membresía</button>
+                </form>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
     <div class="form_container">
         <form action="includes/general.php" method="post">
             <input type="hidden" name="accion" value="logout">
             <button type="submit">Cerrar Sesión</button>
         </form>
     </div>
-
 
     <script src="../assets/js/validacion.js"></script>
 </body>

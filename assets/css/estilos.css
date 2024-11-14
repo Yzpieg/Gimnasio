@@ -342,6 +342,12 @@ th a:hover {
     /* Opacidad ligeramente menor */
 }
 
+.image-container .gym-image {
+    width: 100%;
+    max-width: 600px;
+    /* Ajusta según el tamaño deseado */
+    height: auto;
+}
 
 
 @media (max-width: 600px) {

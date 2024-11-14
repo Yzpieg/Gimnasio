@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS pago (
     id_miembro INT,
     monto DECIMAL(10, 2),
     fecha_pago DATE,
-    metodo_pago ENUM('efectivo', 'tarjeta', 'transferencia') DEFAULT 'tarjeta',
+    metodo_pago ENUM('efectivo', 'tarjeta', 'transferencia','bizum','paypal') DEFAULT 'tarjeta',
     FOREIGN KEY (id_miembro) REFERENCES miembro(id_miembro) ON DELETE CASCADE
 );
 
