@@ -113,3 +113,91 @@ table.styled-table th.sortable.sorted-desc:after {
 .button:hover {
     background-color: #2b7a78;
 }
+
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    /* Espaciado entre campos */
+    margin-bottom: 20px;
+    flex-wrap: nowrap;
+    /* Mantiene los campos en una sola línea */
+    justify-content: center;
+    /* Centra los elementos en el formulario */
+}
+
+.search-form input {
+    flex: 1;
+    /* Todos los campos ocupan el mismo ancho */
+    max-width: 300px;
+    /* Limita el ancho máximo de los campos */
+    padding: 10px;
+    /* Espaciado interno */
+    font-size: 16px;
+    /* Tamaño de fuente legible */
+    border: 1px solid #ccc;
+    /* Bordes estándar */
+    border-radius: 4px;
+    /* Bordes redondeados */
+    box-sizing: border-box;
+    /* Incluye el padding en el tamaño total */
+}
+
+.form_container {
+    flex: 1 !important;
+    padding: 10px !important;
+    font-size: 16px !important;
+    border: 1px solid #ccc !important;
+    border-radius: 4px !important;
+}
+
+.search-form button {
+    padding: 10px 20px;
+    /* Tamaño proporcional al resto */
+    font-size: 16px;
+    /* Tamaño de fuente consistente */
+    background-color: #3aafa9;
+    /* Color consistente con el resto de los botones */
+    color: #fff;
+    /* Texto blanco */
+    border: none;
+    /* Sin bordes */
+    border-radius: 4px;
+    /* Bordes redondeados */
+    cursor: pointer;
+    /* Cursor en forma de mano */
+    flex-shrink: 0;
+    /* Evita que el botón cambie de tamaño */
+    transition: background-color 0.3s ease;
+    /* Suaviza el cambio de color en hover */
+}
+
+.search-form button:hover {
+    background-color: #2b7a78;
+    /* Color más oscuro para el hover */
+}
+
+
+
+
+
+
+
+.delete-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.delete-button:hover {
+    background-color: #d32f2f;
+}
+
+.success-message {
+    color: green;
+    font-weight: bold;
+    margin: 10px 0;
+}

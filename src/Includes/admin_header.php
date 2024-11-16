@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $title; ?></title>
     <link rel="stylesheet" href="../assets/css/estilos.css"> <!-- Enlace al archivo CSS -->
+    <!-- Estilo específico para cada página -->
+    <!-- Estilo específico para cada página (si está definido) -->
+    <?php if (!empty($cssFile)): ?>
+        <link rel="stylesheet" href="<?php echo htmlspecialchars($cssFile); ?>">
+    <?php endif; ?>
     <script src="../assets/js/validacion.js"></script>
 </head>
 

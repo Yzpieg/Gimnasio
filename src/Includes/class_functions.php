@@ -1,24 +1,47 @@
 <?php
 require_once('general.php');
 
-function obtenerClases($conn, $filtro = '')
+function obtenerClases($conn, $filtros = [])
 {
     $sql = "SELECT c.id_clase, c.nombre, m.nombre AS especialidad, u.nombre AS monitor, 
                    c.fecha, c.horario, c.duracion, c.capacidad_maxima
             FROM clase c
             LEFT JOIN monitor mo ON c.id_monitor = mo.id_monitor
             LEFT JOIN usuario u ON mo.id_usuario = u.id_usuario
-            LEFT JOIN especialidad m ON c.id_especialidad = m.id_especialidad";
+            LEFT JOIN especialidad m ON c.id_especialidad = m.id_especialidad
+            WHERE 1=1";
 
-    if (!empty($filtro)) {
-        $sql .= " WHERE c.nombre LIKE ? OR u.nombre LIKE ? OR m.nombre LIKE ?";
+    $params = [];
+    $types = "";
+
+    if (!empty($filtros['nombre_clase'])) {
+        $sql .= " AND c.nombre LIKE ?";
+        $params[] = '%' . $filtros['nombre_clase'] . '%';
+        $types .= "s";
+    }
+
+    if (!empty($filtros['nombre_monitor'])) {
+        $sql .= " AND u.nombre LIKE ?";
+        $params[] = '%' . $filtros['nombre_monitor'] . '%';
+        $types .= "s";
+    }
+
+    if (!empty($filtros['especialidad'])) {
+        $sql .= " AND m.nombre LIKE ?";
+        $params[] = '%' . $filtros['especialidad'] . '%';
+        $types .= "s";
+    }
+
+    if (!empty($filtros['fecha'])) {
+        $sql .= " AND c.fecha = ?";
+        $params[] = $filtros['fecha'];
+        $types .= "s";
     }
 
     $stmt = $conn->prepare($sql);
 
-    if (!empty($filtro)) {
-        $filtro_param = '%' . $filtro . '%';
-        $stmt->bind_param("sss", $filtro_param, $filtro_param, $filtro_param);
+    if (!empty($params)) {
+        $stmt->bind_param($types, ...$params);
     }
 
     $stmt->execute();

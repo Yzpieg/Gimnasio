@@ -497,6 +497,24 @@ table.styled-table th.sortable.sorted-desc:after {
     opacity: 1;
 }
 
+.btn-general {
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+    background-color: #3aafa9;
+    color: #fff;
+    font-size: 16px;
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    /* Elimina el subrayado en enlaces */
+}
+
+.btn-general:hover {
+    background-color: #2b7a78;
+}
 
 /* Responsividad */
 @media (max-width: 768px) {

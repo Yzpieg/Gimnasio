@@ -32,3 +32,11 @@ function ordenarTabla(columna) {
     filas.forEach(fila => tabla.tBodies[0].appendChild(fila));
 }
 
+function confirmarEliminacion() {
+    return confirm("¿Estás seguro de que deseas eliminar esta clase? Esta acción no se puede deshacer.");
+}
+function limpiarFormulario() {
+    const form = document.querySelector('.search-form'); // Selecciona el formulario
+    form.reset(); // Limpia los valores de los campos
+    window.location.href = 'clases.php'; // Opcional: Redirige a la página sin parámetros
+}

@@ -41,7 +41,6 @@ if (isset($_SESSION['mensaje'])) {
     <!-- Contenedor del formulario de registro de usuario -->
     <div class="form_container">
         <h2>Registro de Usuario</h2>
-        <!-- Formulario de registro con validación de formulario en JavaScript -->
         <form action="registro.php" method="POST" onsubmit="return validarFormulario()">
             <label for="nombre">Nombre:</label>
             <input type="text" id="nombre" name="nombre" required value="<?php echo isset($_SESSION['form_data']['nombre']) ? htmlspecialchars($_SESSION['form_data']['nombre']) : ''; ?>">
@@ -55,13 +54,13 @@ if (isset($_SESSION['mensaje'])) {
             <label for="confirmar_contrasenya">Confirmar Contraseña:</label>
             <input type="password" id="confirmar_contrasenya" name="confirmar_contrasenya" required>
 
-            <button type="submit">Registrarse</button>
+            <button type="submit" class="btn-general">Registrarse</button>
         </form>
-        <!-- Botón para volver a la página principal -->
     </div>
     <div class="button-container">
-        <a href="../index.php" class="btn-volver">Volver al inicio</a>
+        <a href="../index.php" class="btn-general">Volver al inicio</a>
     </div>
+
 
 
     <!-- Enlace al archivo JavaScript para validación de formularios en el registro -->
