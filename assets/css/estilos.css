@@ -349,6 +349,172 @@ th a:hover {
     height: auto;
 }
 
+/* Ajustes para el encabezado */
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 20px;
+}
+
+header h1 {
+    font-size: 24px;
+    text-align: center;
+    flex: 1;
+    color: #fff;
+}
+
+/* Estilo para el nombre de usuario en la esquina superior derecha */
+.user-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    margin-left: auto;
+    /* Alinea a la derecha */
+}
+
+/* Estilo general del menú */
+.menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background-color: #333;
+}
+
+.menu>li {
+    position: relative;
+    padding: 10px 20px;
+}
+
+.menu a {
+    text-decoration: none;
+    color: white;
+    padding: 10px 20px;
+    display: block;
+}
+
+.menu a:hover {
+    background-color: #575757;
+}
+
+/* Submenú */
+.submenu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 100%;
+    /* Alinear debajo del menú principal */
+    left: 0;
+    background-color: #444;
+    display: none;
+    /* Ocultar por defecto */
+    z-index: 10;
+}
+
+.submenu li {
+    padding: 0;
+}
+
+.submenu li a {
+    color: white;
+    padding: 10px 20px;
+    display: block;
+}
+
+.submenu li a:hover {
+    background-color: #575757;
+}
+
+/* Mostrar submenú al pasar el ratón */
+.menu-item:hover .submenu {
+    display: block;
+}
+
+/* General Table Styles */
+table.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Header Row */
+table.styled-table thead tr {
+    background-color: #3aafa9;
+    color: #fff;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Table Cells */
+table.styled-table th,
+table.styled-table td {
+    padding: 12px 20px;
+    text-align: center;
+}
+
+/* Alternate Row Colors */
+table.styled-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Hover Effect on Rows */
+table.styled-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Sortable Columns */
+table.styled-table th.sortable {
+    cursor: pointer;
+    position: relative;
+}
+
+/* Arrow Indicators */
+table.styled-table th.sortable:after {
+    content: "▲";
+    position: absolute;
+    right: 10px;
+    font-size: 12px;
+    color: #fff;
+    opacity: 0.6;
+    transform: rotate(180deg);
+}
+
+table.styled-table th.sortable.sorted-asc:after {
+    transform: rotate(0);
+    opacity: 1;
+}
+
+table.styled-table th.sortable.sorted-desc:after {
+    transform: rotate(180deg);
+    opacity: 1;
+}
+
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .menu {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .menu>li {
+        width: 100%;
+    }
+
+    .submenu {
+        position: static;
+        /* Alinear submenús dentro del flujo del menú */
+    }
+}
+
 
 @media (max-width: 600px) {
     header h1 {

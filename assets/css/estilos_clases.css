@@ -1,0 +1,115 @@
+/* General Styles */
+body {
+    background-color: #f4f7f6;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* Main Content */
+main {
+    padding: 20px;
+    max-width: 1900px;
+    width: 100%;
+    text-align: center;
+}
+
+/* Form Container */
+.form_container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 1600px;
+    margin: 20px auto;
+    text-align: left;
+}
+
+/* Table Styles */
+table.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Header Row */
+table.styled-table thead tr {
+    background-color: #3aafa9;
+    color: #fff;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Table Cells */
+table.styled-table th,
+table.styled-table td {
+    padding: 12px 20px;
+    text-align: center;
+}
+
+/* Alternate Row Colors */
+table.styled-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Hover Effect on Rows */
+table.styled-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Sortable Columns */
+table.styled-table th.sortable {
+    cursor: pointer;
+    position: relative;
+}
+
+/* Arrow Indicators */
+table.styled-table th.sortable:after {
+    content: "▲";
+    position: absolute;
+    right: 10px;
+    font-size: 12px;
+    color: #fff;
+    opacity: 0.6;
+    transform: rotate(180deg);
+}
+
+table.styled-table th.sortable.sorted-asc:after {
+    transform: rotate(0);
+    opacity: 1;
+}
+
+table.styled-table th.sortable.sorted-desc:after {
+    transform: rotate(180deg);
+    opacity: 1;
+}
+
+/* Button Styles */
+.button-container {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #3aafa9;
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #2b7a78;
+}

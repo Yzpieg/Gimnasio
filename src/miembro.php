@@ -1,27 +1,72 @@
 <?php
-session_start();
-
-// Verifica que el usuario ha iniciado sesión y tiene el rol de "miembro"
-if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] != 'miembro') {
-    header("Location: index.php?error=Acceso+denegado");
-    exit();
-}
+$title = "Acceso Miembros";
+include 'includes/miembro_header.php'; // Este archivo maneja la verificación de sesión y el encabezado
+require_once 'includes/member_functions.php';
 
 $nombre = $_SESSION['nombre'];
+$id_usuario = $_SESSION['id_usuario'];
+
+// Llama a la función para obtener la información del miembro
+$miembro = obtenerInformacionMiembro($id_usuario);
+
+if (!$miembro) {
+    echo "No se encontró información para este miembro.";
+    exit;
+}
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenido Miembro</title>
-</head>
-
-<body>
+<!-- Contenedor principal con clase form_container -->
+<main class="form_container">
     <h2>Bienvenido, <?php echo htmlspecialchars($nombre); ?>!</h2>
-    <p>Accede a todas tus actividades y servicios como miembro.</p>
-</body>
+    <h3>Información de tu Membresía</h3>
 
-</html>
+    <!-- Tabla de información usando solo las clases aplicables -->
+    <table>
+        <tr>
+            <th>Nombre de Usuario:</th>
+            <td><?php echo htmlspecialchars($miembro['nombre_usuario']); ?></td>
+        </tr>
+        <tr>
+            <th>Email:</th>
+            <td><?php echo htmlspecialchars($miembro['email']); ?></td>
+        </tr>
+        <tr>
+            <th>Fecha de Registro:</th>
+            <td><?php echo htmlspecialchars($miembro['fecha_registro']); ?></td>
+        </tr>
+        <tr>
+            <th>Nombre de la Membresía:</th>
+            <td><?php echo htmlspecialchars($miembro['nombre_membresia']); ?></td>
+        </tr>
+        <tr>
+            <th>Fecha de Inicio de Membresía:</th>
+            <td><?php echo htmlspecialchars($miembro['fecha_inicio']); ?></td>
+        </tr>
+        <tr>
+            <th>Fecha de Fin de Membresía:</th>
+            <td><?php echo htmlspecialchars($miembro['fecha_fin']); ?></td>
+        </tr>
+        <tr>
+            <th>Estado de la Membresía:</th>
+            <td><?php echo htmlspecialchars($miembro['estado']); ?></td>
+        </tr>
+        <tr>
+            <th>Renovación Automática:</th>
+            <td><?php echo $miembro['renovacion_automatica'] ? 'Sí' : 'No'; ?></td>
+        </tr>
+        <tr>
+            <th>Monto del Pago:</th>
+            <td><?php echo htmlspecialchars($miembro['monto_pago']); ?></td>
+        </tr>
+        <tr>
+            <th>Fecha de Pago:</th>
+            <td><?php echo htmlspecialchars($miembro['fecha_pago']); ?></td>
+        </tr>
+        <tr>
+            <th>Método de Pago:</th>
+            <td><?php echo htmlspecialchars($miembro['metodo_pago']); ?></td>
+        </tr>
+    </table>
+</main>
+
+<?php include 'includes/footer.php'; ?>

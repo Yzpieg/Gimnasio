@@ -224,3 +224,44 @@ function obtenerFechasMembresiaActiva($conn, $id_miembro)
 
     return $result->fetch_assoc();
 }
+function obtenerInformacionMiembro($id_usuario)
+{
+    $conn = obtenerConexion();
+
+    $sql = "
+        SELECT 
+            u.nombre AS nombre_usuario,
+            u.email,
+            m.fecha_registro,
+            mb.tipo AS nombre_membresia,
+            mm.fecha_inicio,
+            mm.fecha_fin,
+            mm.estado,
+            mm.renovacion_automatica,
+            p.monto AS monto_pago,
+            p.fecha_pago,
+            p.metodo_pago
+        FROM miembro AS m
+        JOIN usuario AS u ON m.id_usuario = u.id_usuario
+        LEFT JOIN miembro_membresia AS mm ON m.id_miembro = mm.id_miembro
+        LEFT JOIN membresia AS mb ON mm.id_membresia = mb.id_membresia
+        LEFT JOIN pago AS p ON p.id_miembro = m.id_miembro
+        WHERE u.id_usuario = ?
+        ORDER BY mm.fecha_inicio DESC
+        LIMIT 1;
+    ";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id_usuario);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $miembro = $result->fetch_assoc();
+    } else {
+        $miembro = null; // No se encontró información para este miembro
+    }
+
+    $stmt->close();
+    return $miembro;
+}
