@@ -1,7 +1,7 @@
 <?php
 
 require_once('includes/member_functions.php');
-require_once('includes/user_functions.php'); // Para la función verificarAdmin
+require_once('includes/user_functions.php');
 
 verificarAdmin();
 
@@ -68,7 +68,7 @@ include 'includes/admin_header.php';
                     <td><?php echo htmlspecialchars($miembro['tipo']); ?></td>
                     <td>
                         <?php
-                        // Mostrar los entrenamientos como texto, ya que GROUP_CONCAT devuelve una cadena
+
                         echo htmlspecialchars($miembro['entrenamientos'] ?? 'N/A');
                         ?>
                     </td>

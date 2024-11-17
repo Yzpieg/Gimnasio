@@ -19,7 +19,6 @@ if (isset($_SESSION['mensaje'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gimnasio - Registro e Inicio de Sesión</title>
-    <!-- Enlace al archivo CSS para estilos de la página -->
     <link rel="stylesheet" href="../assets/css/estilos.css">
 </head>
 
@@ -63,7 +62,7 @@ if (isset($_SESSION['mensaje'])) {
 
 
 
-    <!-- Enlace al archivo JavaScript para validación de formularios en el registro -->
+
     <script src="../assets/js/validacion.js"></script>
 </body>
 

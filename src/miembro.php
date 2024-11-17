@@ -1,6 +1,6 @@
 <?php
 $title = "Acceso Miembros";
-include 'includes/miembro_header.php'; // Verificación de sesión y encabezado
+include 'includes/miembro_header.php';
 require_once 'includes/member_functions.php';
 
 $nombre = $_SESSION['nombre'];

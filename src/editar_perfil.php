@@ -1,10 +1,10 @@
 <?php
 $title = "Editar Perfil";
-include 'includes/miembro_header.php'; // Verificación de sesión y encabezado
-require_once 'includes/member_functions.php'; // Funciones necesarias
+include 'includes/miembro_header.php';
+require_once 'includes/member_functions.php';
 
 $conn = obtenerConexion();
-$id_usuario = $_SESSION['id_usuario']; // ID del usuario en sesión
+$id_usuario = $_SESSION['id_usuario'];
 $miembro = obtenerMiembroPorID($conn, $id_usuario);
 
 if (!$miembro) {
