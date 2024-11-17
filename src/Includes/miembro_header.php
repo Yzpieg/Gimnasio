@@ -29,10 +29,9 @@ if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] != 'miembro') {
         </div>
 
         <nav id="navegacion-rapida">
-            <a href="usuario.php">Inicio</a>
             <a href="mis_clases.php">Mis Clases</a>
             <a href="mi_membresia.php">Mi Membresía</a>
-            <a href="perfil.php">Mi Perfil</a>
+            <a href="miembro.php">Mi Perfil</a>
             <form action="includes/general.php" method="post" style="display: inline;">
                 <input type="hidden" name="accion" value="logout">
                 <button type="submit" class="logout-link">Cerrar Sesión</button>

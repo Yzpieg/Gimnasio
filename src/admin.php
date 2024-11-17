@@ -1,7 +1,6 @@
 <?php
 
 require_once('includes/admin_functions.php');
-
 verificarAdmin();
 
 $conn = obtenerConexion();

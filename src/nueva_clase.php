@@ -1,7 +1,8 @@
 <?php
 require_once 'admin_header.php';
 require_once 'includes/class_functions.php';
-
+require_once('includes/admin_functions.php');
+verificarAdmin();
 $conn = obtenerConexion();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

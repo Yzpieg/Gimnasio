@@ -82,22 +82,34 @@ function eliminarEspecialidad($conn, $id_especialidad)
     }
 }
 
-// admin_functions.php
 
 function agregarMembresia($conn, $tipo, $precio, $duracion, $beneficios, $entrenamientos = [])
 {
+    if (empty($tipo) || $precio <= 0 || $duracion <= 0) {
+        return "Todos los campos son obligatorios y deben tener valores válidos.";
+    }
+
     $stmt = $conn->prepare("INSERT INTO membresia (tipo, precio, duracion, beneficios) VALUES (?, ?, ?, ?)");
+    if (!$stmt) {
+        return "Error al preparar la consulta: " . $conn->error;
+    }
+
     $stmt->bind_param("sdis", $tipo, $precio, $duracion, $beneficios);
     if ($stmt->execute()) {
         $id_membresia = $conn->insert_id;
         $stmt->close();
 
-        // Insertar los entrenamientos seleccionados
         if (!empty($entrenamientos)) {
             $stmt = $conn->prepare("INSERT INTO membresia_entrenamiento (id_membresia, id_entrenamiento) VALUES (?, ?)");
+            if (!$stmt) {
+                return "Error al preparar la consulta de entrenamientos: " . $conn->error;
+            }
+
             foreach ($entrenamientos as $id_entrenamiento) {
                 $stmt->bind_param("ii", $id_membresia, $id_entrenamiento);
-                $stmt->execute();
+                if (!$stmt->execute()) {
+                    return "Error al insertar entrenamiento: " . $stmt->error;
+                }
             }
             $stmt->close();
         }
@@ -109,6 +121,7 @@ function agregarMembresia($conn, $tipo, $precio, $duracion, $beneficios, $entren
         return $error;
     }
 }
+
 
 
 function editarMembresia($conn, $id_membresia, $tipo, $precio, $duracion, $beneficios, $entrenamientos = [])

@@ -1,4 +1,3 @@
-/* General Styles */
 body {
     background-color: #f4f7f6;
     color: #333;
@@ -10,7 +9,6 @@ body {
     min-height: 100vh;
 }
 
-/* Main Content */
 main {
     padding: 20px;
     max-width: 1900px;
@@ -18,7 +16,6 @@ main {
     text-align: center;
 }
 
-/* Form Container */
 .form_container {
     background-color: #ffffff;
     padding: 20px;
@@ -29,7 +26,6 @@ main {
     text-align: left;
 }
 
-/* Table Styles */
 table.styled-table {
     width: 100%;
     border-collapse: collapse;
@@ -41,7 +37,6 @@ table.styled-table {
     overflow: hidden;
 }
 
-/* Header Row */
 table.styled-table thead tr {
     background-color: #3aafa9;
     color: #fff;
@@ -49,30 +44,25 @@ table.styled-table thead tr {
     font-weight: bold;
 }
 
-/* Table Cells */
 table.styled-table th,
 table.styled-table td {
     padding: 12px 20px;
     text-align: center;
 }
 
-/* Alternate Row Colors */
 table.styled-table tbody tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
-/* Hover Effect on Rows */
 table.styled-table tbody tr:hover {
     background-color: #f1f1f1;
 }
 
-/* Sortable Columns */
 table.styled-table th.sortable {
     cursor: pointer;
     position: relative;
 }
 
-/* Arrow Indicators */
 table.styled-table th.sortable:after {
     content: "▲";
     position: absolute;
@@ -93,7 +83,6 @@ table.styled-table th.sortable.sorted-desc:after {
     opacity: 1;
 }
 
-/* Button Styles */
 .button-container {
     margin: 20px 0;
     text-align: center;
@@ -118,29 +107,19 @@ table.styled-table th.sortable.sorted-desc:after {
     display: flex;
     align-items: center;
     gap: 15px;
-    /* Espaciado entre campos */
     margin-bottom: 20px;
     flex-wrap: nowrap;
-    /* Mantiene los campos en una sola línea */
     justify-content: center;
-    /* Centra los elementos en el formulario */
 }
 
 .search-form input {
     flex: 1;
-    /* Todos los campos ocupan el mismo ancho */
     max-width: 300px;
-    /* Limita el ancho máximo de los campos */
     padding: 10px;
-    /* Espaciado interno */
     font-size: 16px;
-    /* Tamaño de fuente legible */
     border: 1px solid #ccc;
-    /* Bordes estándar */
     border-radius: 4px;
-    /* Bordes redondeados */
     box-sizing: border-box;
-    /* Incluye el padding en el tamaño total */
 }
 
 .form_container {
@@ -153,35 +132,19 @@ table.styled-table th.sortable.sorted-desc:after {
 
 .search-form button {
     padding: 10px 20px;
-    /* Tamaño proporcional al resto */
     font-size: 16px;
-    /* Tamaño de fuente consistente */
     background-color: #3aafa9;
-    /* Color consistente con el resto de los botones */
     color: #fff;
-    /* Texto blanco */
     border: none;
-    /* Sin bordes */
     border-radius: 4px;
-    /* Bordes redondeados */
     cursor: pointer;
-    /* Cursor en forma de mano */
     flex-shrink: 0;
-    /* Evita que el botón cambie de tamaño */
     transition: background-color 0.3s ease;
-    /* Suaviza el cambio de color en hover */
 }
 
 .search-form button:hover {
     background-color: #2b7a78;
-    /* Color más oscuro para el hover */
 }
-
-
-
-
-
-
 
 .delete-button {
     background-color: #f44336;

@@ -1,4 +1,3 @@
-/* General Styles */
 * {
     margin: 0;
     padding: 0;
@@ -17,7 +16,6 @@ body {
     min-height: 100vh;
 }
 
-/* Header */
 header {
     background-color: #3aafa9;
     color: #fff;
@@ -30,7 +28,6 @@ header h1 {
     font-size: 24px;
 }
 
-/* Estilo para enlaces de navegación y el botón de cierre de sesión */
 header nav a,
 header nav .logout-link {
     color: #fff;
@@ -50,7 +47,6 @@ header nav .logout-link:hover {
 }
 
 
-/* Main Content */
 main {
     padding: 20px;
     max-width: 1900px;
@@ -58,7 +54,6 @@ main {
     text-align: center;
 }
 
-/* Form Container */
 .form_container {
     background-color: #ffffff;
     padding: 20px;
@@ -79,7 +74,6 @@ main {
     margin-bottom: 20px;
 }
 
-/* Formulario para añadir una nueva membresía */
 .membresia-form {
     padding: 20px;
     background-color: #f1f1f1;
@@ -107,7 +101,6 @@ main {
     cursor: pointer;
 }
 
-/* Contenedor de cada membresía existente */
 .membresia-item {
     display: flex;
     flex-wrap: wrap;
@@ -137,18 +130,13 @@ main {
     font-size: 16px;
 }
 
-/* Campo de texto para 'beneficios' en cada membresía existente */
 .membresia-item textarea[name="beneficios"] {
     width: 100%;
-    /* Ocupa el ancho completo del contenedor */
     min-height: 80px;
-    /* Aumenta la altura mínima para mejor visibilidad */
     resize: vertical;
-    /* Permite ajustar la altura, pero no el ancho */
 }
 
 
-/* Botones de edición y eliminación en línea */
 .membresia-botones {
     display: flex;
     gap: 10px;
@@ -163,7 +151,6 @@ main {
     cursor: pointer;
 }
 
-/* Estilos para los checkboxes en membresías editables */
 .checkbox-group {
     display: flex;
     flex-wrap: wrap;
@@ -212,7 +199,6 @@ main {
     background-color: #2b7a78;
 }
 
-/* Messages */
 .mensaje-error {
     color: #e74c3c;
     font-weight: bold;
@@ -231,7 +217,6 @@ main {
     margin: 15px 0;
 }
 
-/* Footer */
 footer {
     background-color: #3aafa9;
     color: #fff;
@@ -297,7 +282,6 @@ th a:hover {
     background-color: #f1f1f1;
 }
 
-/* Botones de acciones generales */
 .button-container button,
 .membresia-form button[type="submit"],
 .membresia-botones button {
@@ -311,14 +295,12 @@ th a:hover {
     transition: background-color 0.3s ease;
 }
 
-/* Hover para los botones de acciones */
 .button-container button:hover,
 .membresia-form button[type="submit"]:hover,
 .membresia-botones button:hover {
     background-color: #2b7a78;
 }
 
-/* Alineación centrada de botones en formularios */
 .button-container {
     display: flex;
     justify-content: center;
@@ -326,30 +308,21 @@ th a:hover {
     margin-top: 15px;
 }
 
-/* Estilo específico para botones desactivados */
 .btn-disabled {
     background-color: #e0e0e0 !important;
-    /* Fondo gris más claro */
     color: #999 !important;
-    /* Texto gris suave */
     cursor: not-allowed !important;
-    /* Cursor de prohibido */
     box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2) !important;
-    /* Sombra interna más sutil */
     border: 1px solid #b3b3b3 !important;
-    /* Borde gris suave */
     opacity: 0.8 !important;
-    /* Opacidad ligeramente menor */
 }
 
 .image-container .gym-image {
     width: 100%;
     max-width: 600px;
-    /* Ajusta según el tamaño deseado */
     height: auto;
 }
 
-/* Ajustes para el encabezado */
 .header-content {
     display: flex;
     justify-content: space-between;
@@ -365,16 +338,13 @@ header h1 {
     color: #fff;
 }
 
-/* Estilo para el nombre de usuario en la esquina superior derecha */
 .user-name {
     font-size: 16px;
     font-weight: bold;
     color: #fff;
     margin-left: auto;
-    /* Alinea a la derecha */
 }
 
-/* Estilo general del menú */
 .menu {
     list-style: none;
     margin: 0;
@@ -399,18 +369,15 @@ header h1 {
     background-color: #575757;
 }
 
-/* Submenú */
 .submenu {
     list-style: none;
     margin: 0;
     padding: 0;
     position: absolute;
     top: 100%;
-    /* Alinear debajo del menú principal */
     left: 0;
     background-color: #444;
     display: none;
-    /* Ocultar por defecto */
     z-index: 10;
 }
 
@@ -428,12 +395,10 @@ header h1 {
     background-color: #575757;
 }
 
-/* Mostrar submenú al pasar el ratón */
 .menu-item:hover .submenu {
     display: block;
 }
 
-/* General Table Styles */
 table.styled-table {
     width: 100%;
     border-collapse: collapse;
@@ -445,7 +410,6 @@ table.styled-table {
     overflow: hidden;
 }
 
-/* Header Row */
 table.styled-table thead tr {
     background-color: #3aafa9;
     color: #fff;
@@ -453,30 +417,25 @@ table.styled-table thead tr {
     font-weight: bold;
 }
 
-/* Table Cells */
 table.styled-table th,
 table.styled-table td {
     padding: 12px 20px;
     text-align: center;
 }
 
-/* Alternate Row Colors */
 table.styled-table tbody tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
-/* Hover Effect on Rows */
 table.styled-table tbody tr:hover {
     background-color: #f1f1f1;
 }
 
-/* Sortable Columns */
 table.styled-table th.sortable {
     cursor: pointer;
     position: relative;
 }
 
-/* Arrow Indicators */
 table.styled-table th.sortable:after {
     content: "▲";
     position: absolute;
@@ -509,14 +468,12 @@ table.styled-table th.sortable.sorted-desc:after {
     border-radius: 5px;
     cursor: pointer;
     text-decoration: none;
-    /* Elimina el subrayado en enlaces */
 }
 
 .btn-general:hover {
     background-color: #2b7a78;
 }
 
-/* Responsividad */
 @media (max-width: 768px) {
     .menu {
         flex-direction: column;
@@ -529,10 +486,8 @@ table.styled-table th.sortable.sorted-desc:after {
 
     .submenu {
         position: static;
-        /* Alinear submenús dentro del flujo del menú */
     }
 }
-
 
 @media (max-width: 600px) {
     header h1 {

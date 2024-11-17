@@ -1,6 +1,6 @@
 <?php
 require_once('includes/admin_functions.php');
-require_once('includes/member_functions.php'); // Asegúrate de que esta contiene obtenerEntrenamientos()
+require_once('includes/member_functions.php');
 
 verificarAdmin();
 $conn = obtenerConexion();
@@ -76,7 +76,7 @@ include 'includes/admin_header.php';
         <?php endif; ?>
 
         <!-- Formulario para añadir una nueva membresía -->
-        <form method="POST" action="membresias.php" class="membresia-form">
+        <form method="POST" action="crear_membresia.php" class="membresia-form">
             <h3>Añadir Nueva Membresía</h3>
             <div class="membresia-form-item">
                 <label for="tipo">Tipo:</label>
@@ -115,7 +115,7 @@ include 'includes/admin_header.php';
         <ul class="membresias-lista">
             <?php foreach ($membresias as $membresia): ?>
                 <li>
-                    <form method="POST" action="membresias.php" class="membresia-item">
+                    <form method="POST" action="crear_membresia.php" class="membresia-item">
                         <input type="hidden" name="id_membresia" value="<?php echo $membresia['id_membresia']; ?>">
 
                         <!-- Campos de edición para la membresía -->

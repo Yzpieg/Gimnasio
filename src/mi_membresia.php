@@ -1,6 +1,6 @@
 <?php
 $title = "Acceso Miembros";
-include 'includes/miembro_header.php'; // Verificación de sesión y encabezado
+include 'includes/miembro_header.php'; // Este archivo maneja la verificación de sesión y el encabezado
 require_once 'includes/member_functions.php';
 
 $nombre = $_SESSION['nombre'];
@@ -16,12 +16,13 @@ if (!$miembro) {
 ?>
 
 <!-- Contenedor principal con clase form_container -->
+
 <main class="form_container">
     <h1>EN CONSTRUCCIÓN</h1>
     <h2>Bienvenido, <?php echo htmlspecialchars($nombre); ?>!</h2>
     <h3>Información de tu Membresía</h3>
 
-    <!-- Tabla de información -->
+    <!-- Tabla de información usando solo las clases aplicables -->
     <table>
         <tr>
             <th>Nombre de Usuario:</th>
@@ -67,23 +68,7 @@ if (!$miembro) {
             <th>Método de Pago:</th>
             <td><?php echo htmlspecialchars($miembro['metodo_pago']); ?></td>
         </tr>
-        <tr>
-            <th>Entrenamientos Especializados:</th>
-            <td>
-                <?php
-                if (!empty($miembro['entrenamientos'])) {
-                    echo implode(", ", $miembro['entrenamientos']);
-                } else {
-                    echo "No se han asignado entrenamientos.";
-                }
-                ?>
-            </td>
-        </tr>
     </table>
-    <!-- Botón para regresar o editar -->
-    <div class="button-container">
-        <a href="editar_perfil.php" class="btn-general">Editar Perfil</a>
-    </div>
 </main>
 
 <?php include 'includes/footer.php'; ?>

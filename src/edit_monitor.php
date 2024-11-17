@@ -1,6 +1,6 @@
 <?php
 require_once('includes/monitor_functions.php');
-require_once('includes/user_functions.php'); // Para verificar si es admin
+require_once('includes/user_functions.php');
 
 verificarAdmin();
 

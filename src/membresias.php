@@ -47,8 +47,8 @@ include 'includes/admin_header.php';
 <body>
     <main class="form_container">
         <h2>Detalles de Membresías por Miembro</h2>
-        <div class="boton-crear">
-            <a href="crear_membresia.php" class="btn btn-primario">Crear Nueva Membresía</a>
+        <div class="form_container">
+            <a href="crear_membresia.php" class="btn-general">Crear Nueva Membresía</a>
         </div>
         <?php if (!empty($membresias_miembros)): ?>
             <table class="tabla">

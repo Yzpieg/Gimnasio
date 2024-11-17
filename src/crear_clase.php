@@ -1,6 +1,7 @@
 <?php
 require_once 'includes/class_functions.php';
-
+require_once('includes/admin_functions.php');
+verificarAdmin();
 $conn = obtenerConexion();
 
 // Manejar el formulario de creación de clase
