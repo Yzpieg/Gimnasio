@@ -1,6 +1,6 @@
 USE actividad_02;
 
--- Insertar 20 usuarios adicionales con la contraseña '111111'
+-- Insertar 20 usuarios con la contraseña '111111'
 INSERT INTO usuario (nombre, email, contrasenya, rol, telefono) VALUES
 ('Eva', 'eva@gmail.com', '$2y$10$LaUkgX0H9BOF9nj/YoPtj.oVF/wphehk7UdMyalctRAbClyInUQsi', 'usuario', '111111111'),
 ('Luis', 'luis@gmail.com', '$2y$10$LaUkgX0H9BOF9nj/YoPtj.oVF/wphehk7UdMyalctRAbClyInUQsi', 'usuario', '222222222'),
@@ -12,7 +12,7 @@ INSERT INTO usuario (nombre, email, contrasenya, rol, telefono) VALUES
 ('Raul', 'raul@gmail.com', '$2y$10$LaUkgX0H9BOF9nj/YoPtj.oVF/wphehk7UdMyalctRAbClyInUQsi', 'usuario', '888888888'),
 ('Clara', 'clara@gmail.com', '$2y$10$LaUkgX0H9BOF9nj/YoPtj.oVF/wphehk7UdMyalctRAbClyInUQsi', 'usuario', '999999999'),
 ('Pablo', 'pablo@gmail.com', '$2y$10$LaUkgX0H9BOF9nj/YoPtj.oVF/wphehk7UdMyalctRAbClyInUQsi', 'usuario', '101010101'),
-('Laura', 'laura2@gmail.com', '$2y$10$LaUkgX0H9BOF9nj/YoPtj.oVF/wphehk7UdMyalctRAbClyInUQsi', 'usuario', '121212121'),
+('Laura', 'laura@gmail.com', '$2y$10$LaUkgX0H9BOF9nj/YoPtj.oVF/wphehk7UdMyalctRAbClyInUQsi', 'usuario', '121212121'),
 ('Juan', 'juan@gmail.com', '$2y$10$LaUkgX0H9BOF9nj/YoPtj.oVF/wphehk7UdMyalctRAbClyInUQsi', 'usuario', '131313131'),
 ('Carmen', 'carmen@gmail.com', '$2y$10$LaUkgX0H9BOF9nj/YoPtj.oVF/wphehk7UdMyalctRAbClyInUQsi', 'usuario', '141414141'),
 ('Antonio', 'antonio@gmail.com', '$2y$10$LaUkgX0H9BOF9nj/YoPtj.oVF/wphehk7UdMyalctRAbClyInUQsi', 'usuario', '151515151'),
@@ -20,7 +20,7 @@ INSERT INTO usuario (nombre, email, contrasenya, rol, telefono) VALUES
 ('Miguel', 'miguel@gmail.com', '$2y$10$LaUkgX0H9BOF9nj/YoPtj.oVF/wphehk7UdMyalctRAbClyInUQsi', 'usuario', '171717171'),
 ('Teresa', 'teresa@gmail.com', '$2y$10$LaUkgX0H9BOF9nj/YoPtj.oVF/wphehk7UdMyalctRAbClyInUQsi', 'usuario', '181818181'),
 ('Jose', 'jose@gmail.com', '$2y$10$LaUkgX0H9BOF9nj/YoPtj.oVF/wphehk7UdMyalctRAbClyInUQsi', 'usuario', '191919191'),
-('Ana', 'ana2@gmail.com', '$2y$10$LaUkgX0H9BOF9nj/YoPtj.oVF/wphehk7UdMyalctRAbClyInUQsi', 'usuario', '202020202'),
+('Ana', 'ana@gmail.com', '$2y$10$LaUkgX0H9BOF9nj/YoPtj.oVF/wphehk7UdMyalctRAbClyInUQsi', 'usuario', '202020202'),
 ('Fernando', 'fernando@gmail.com', '$2y$10$LaUkgX0H9BOF9nj/YoPtj.oVF/wphehk7UdMyalctRAbClyInUQsi', 'usuario', '212121212');
 
 

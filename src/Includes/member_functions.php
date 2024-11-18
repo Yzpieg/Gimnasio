@@ -128,21 +128,107 @@ function obtenerMiembroPorID($conn, $id_usuario)
 
 function actualizarMiembro($conn, $id_usuario, $nombre, $email, $fecha_registro, $id_membresia)
 {
-    try {
-        $sql = "UPDATE usuario u
-                JOIN miembro m ON u.id_usuario = m.id_usuario
-                SET u.nombre = ?, u.email = ?, m.fecha_registro = ?, m.id_membresia = ?
-                WHERE u.id_usuario = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssii", $nombre, $email, $fecha_registro, $id_membresia, $id_usuario);
-        $stmt->execute();
-        $stmt->close();
+    $conn->begin_transaction();
 
-        return ["success" => true, "message" => "Miembro actualizado correctamente"];
+    try {
+        // Actualizar los datos del usuario
+        $sqlUsuario = "UPDATE usuario SET nombre = ?, email = ? WHERE id_usuario = ?";
+        $stmtUsuario = $conn->prepare($sqlUsuario);
+        $stmtUsuario->bind_param("ssi", $nombre, $email, $id_usuario);
+        $stmtUsuario->execute();
+
+        // Obtener el id_miembro relacionado con el id_usuario
+        $sqlMiembro = "SELECT id_miembro FROM miembro WHERE id_usuario = ?";
+        $stmtMiembro = $conn->prepare($sqlMiembro);
+        $stmtMiembro->bind_param("i", $id_usuario);
+        $stmtMiembro->execute();
+        $resultadoMiembro = $stmtMiembro->get_result();
+
+        if ($resultadoMiembro->num_rows === 0) {
+            throw new Exception("Miembro no encontrado para este usuario.");
+        }
+
+        $id_miembro = $resultadoMiembro->fetch_assoc()['id_miembro'];
+
+        // Actualizar la membresía en la tabla miembro
+        $sqlActualizarMiembro = "UPDATE miembro SET fecha_registro = ?, id_membresia = ? WHERE id_miembro = ?";
+        $stmtActualizarMiembro = $conn->prepare($sqlActualizarMiembro);
+        $stmtActualizarMiembro->bind_param("sii", $fecha_registro, $id_membresia, $id_miembro);
+        $stmtActualizarMiembro->execute();
+
+        // Registrar el cambio en la tabla miembro_membresia
+        $fecha_actual = date('Y-m-d');
+        $fecha_fin = date('Y-m-d', strtotime("+1 month")); // Cambiar según la duración de la membresía
+        $sqlInsertarMembresia = "
+            INSERT INTO miembro_membresia (id_miembro, id_membresia, monto_pagado, fecha_inicio, fecha_fin, estado, renovacion_automatica) 
+            VALUES (?, ?, ?, ?, ?, 'activa', FALSE)
+        ";
+        $stmtInsertarMembresia = $conn->prepare($sqlInsertarMembresia);
+
+        // Obtener el precio de la membresía para registrar el monto pagado
+        $sqlPrecioMembresia = "SELECT precio, duracion FROM membresia WHERE id_membresia = ?";
+        $stmtPrecioMembresia = $conn->prepare($sqlPrecioMembresia);
+        $stmtPrecioMembresia->bind_param("i", $id_membresia);
+        $stmtPrecioMembresia->execute();
+        $resultadoPrecio = $stmtPrecioMembresia->get_result();
+
+        if ($resultadoPrecio->num_rows > 0) {
+            $membresia = $resultadoPrecio->fetch_assoc();
+            $monto_pagado = $membresia['precio'];
+            $duracion_meses = $membresia['duracion'];
+            $fecha_fin = date('Y-m-d', strtotime("+$duracion_meses months", strtotime($fecha_actual)));
+
+            // Registrar la nueva membresía
+            $stmtInsertarMembresia->bind_param("iisss", $id_miembro, $id_membresia, $monto_pagado, $fecha_actual, $fecha_fin);
+            $stmtInsertarMembresia->execute();
+        } else {
+            throw new Exception("Membresía no encontrada.");
+        }
+
+        // Eliminar los entrenamientos anteriores del miembro
+        $sqlBorrarEntrenamientos = "DELETE FROM miembro_entrenamiento WHERE id_miembro = ?";
+        $stmtBorrarEntrenamientos = $conn->prepare($sqlBorrarEntrenamientos);
+        $stmtBorrarEntrenamientos->bind_param("i", $id_miembro);
+        $stmtBorrarEntrenamientos->execute();
+
+        // Obtener los nuevos entrenamientos de la membresía seleccionada
+        if (!is_null($id_membresia)) {
+            $sqlEntrenamientosMembresia = "
+                SELECT id_entrenamiento 
+                FROM membresia_entrenamiento 
+                WHERE id_membresia = ?
+            ";
+            $stmtEntrenamientosMembresia = $conn->prepare($sqlEntrenamientosMembresia);
+            $stmtEntrenamientosMembresia->bind_param("i", $id_membresia);
+            $stmtEntrenamientosMembresia->execute();
+            $resultadoEntrenamientos = $stmtEntrenamientosMembresia->get_result();
+
+            $sqlInsertarEntrenamiento = "
+                INSERT INTO miembro_entrenamiento (id_miembro, id_especialidad) 
+                VALUES (?, ?)
+            ";
+            $stmtInsertarEntrenamiento = $conn->prepare($sqlInsertarEntrenamiento);
+
+            while ($entrenamiento = $resultadoEntrenamientos->fetch_assoc()) {
+                $id_especialidad = $entrenamiento['id_entrenamiento']; // Asigna id_entrenamiento a id_especialidad
+                $stmtInsertarEntrenamiento->bind_param("ii", $id_miembro, $id_especialidad);
+                $stmtInsertarEntrenamiento->execute();
+            }
+        }
+
+        // Confirmar la transacción
+        $conn->commit();
+
+        return ['success' => true];
     } catch (Exception $e) {
-        return ["success" => false, "message" => "Error al actualizar el miembro: " . $e->getMessage()];
+        // Revertir la transacción en caso de error
+        $conn->rollback();
+        return ['success' => false, 'message' => $e->getMessage()];
     }
 }
+
+
+
 
 
 function obtenerEntrenamientos($conn)
@@ -226,42 +312,88 @@ function obtenerFechasMembresiaActiva($conn, $id_miembro)
 }
 function obtenerInformacionMiembro($id_usuario)
 {
-    $conn = obtenerConexion();
+    $conexion = obtenerConexion();
 
     $sql = "
         SELECT 
             u.nombre AS nombre_usuario,
             u.email,
+            u.telefono,
+            u.fecha_creacion,
+            m.fecha_registro
+        FROM usuario u
+        LEFT JOIN miembro m ON u.id_usuario = m.id_usuario
+        WHERE u.id_usuario = ?
+    ";
+
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param("i", $id_usuario);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+
+    if ($resultado->num_rows > 0) {
+        return $resultado->fetch_assoc();
+    } else {
+        return null;
+    }
+}
+function informacionMembresia($id_usuario)
+{
+    $conexion = obtenerConexion();
+
+    $sql = "
+        SELECT 
+            u.nombre AS nombre_usuario,
+            u.email,
+            u.telefono,
+            u.fecha_creacion,
             m.fecha_registro,
-            mb.tipo AS nombre_membresia,
+            mem.tipo AS nombre_membresia,
             mm.fecha_inicio,
             mm.fecha_fin,
             mm.estado,
             mm.renovacion_automatica,
-            p.monto AS monto_pago,
-            p.fecha_pago,
-            p.metodo_pago
-        FROM miembro AS m
-        JOIN usuario AS u ON m.id_usuario = u.id_usuario
-        LEFT JOIN miembro_membresia AS mm ON m.id_miembro = mm.id_miembro
-        LEFT JOIN membresia AS mb ON mm.id_membresia = mb.id_membresia
-        LEFT JOIN pago AS p ON p.id_miembro = m.id_miembro
+            mm.monto_pagado AS monto_pago,
+            p.metodo_pago,
+            p.fecha_pago
+        FROM usuario u
+        LEFT JOIN miembro m ON u.id_usuario = m.id_usuario
+        LEFT JOIN miembro_membresia mm ON m.id_miembro = mm.id_miembro AND mm.estado = 'activa'
+        LEFT JOIN membresia mem ON mm.id_membresia = mem.id_membresia
+        LEFT JOIN pago p ON m.id_miembro = p.id_miembro
         WHERE u.id_usuario = ?
-        ORDER BY mm.fecha_inicio DESC
-        LIMIT 1;
+        ORDER BY p.fecha_pago DESC
+        LIMIT 1
     ";
 
-    $stmt = $conn->prepare($sql);
+    $stmt = $conexion->prepare($sql);
     $stmt->bind_param("i", $id_usuario);
     $stmt->execute();
-    $result = $stmt->get_result();
+    $resultado = $stmt->get_result();
 
-    if ($result->num_rows > 0) {
-        $miembro = $result->fetch_assoc();
-    } else {
-        $miembro = null; // No se encontró información para este miembro
+    $datosMiembro = $resultado->fetch_assoc();
+
+    // Obtener los entrenamientos/especialidades asignados al miembro
+    $sqlEspecialidades = "
+        SELECT e.nombre AS especialidad
+        FROM miembro_entrenamiento me
+        INNER JOIN especialidad e ON me.id_especialidad = e.id_especialidad
+        WHERE me.id_miembro = (
+            SELECT id_miembro FROM miembro WHERE id_usuario = ?
+        )
+    ";
+
+    $stmtEspecialidades = $conexion->prepare($sqlEspecialidades);
+    $stmtEspecialidades->bind_param("i", $id_usuario);
+    $stmtEspecialidades->execute();
+    $resultadoEspecialidades = $stmtEspecialidades->get_result();
+
+    $especialidades = [];
+    while ($fila = $resultadoEspecialidades->fetch_assoc()) {
+        $especialidades[] = $fila['especialidad'];
     }
 
-    $stmt->close();
-    return $miembro;
+    $datosMiembro['especialidades'] = $especialidades;
+
+    return $datosMiembro;
 }

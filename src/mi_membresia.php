@@ -7,7 +7,7 @@ $nombre = $_SESSION['nombre'];
 $id_usuario = $_SESSION['id_usuario'];
 
 // Llama a la función para obtener la información del miembro
-$miembro = obtenerInformacionMiembro($id_usuario);
+$miembro = informacionMembresia($id_usuario);
 
 if (!$miembro) {
     echo "No se encontró información para este miembro.";
@@ -68,6 +68,19 @@ if (!$miembro) {
             <th>Método de Pago:</th>
             <td><?php echo htmlspecialchars($miembro['metodo_pago']); ?></td>
         </tr>
+        <tr>
+            <th>Entrenamientos/Especialidades:</th>
+            <td>
+                <?php
+                if (!empty($miembro['especialidades'])) {
+                    echo htmlspecialchars(implode(", ", $miembro['especialidades']));
+                } else {
+                    echo "No tiene entrenamientos asignados.";
+                }
+                ?>
+            </td>
+        </tr>
+
     </table>
 </main>
 

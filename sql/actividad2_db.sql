@@ -155,6 +155,9 @@ VALUES
     ('mensual', 30.00, 1, 'Acceso a todas las clases generales'),
     ('anual', 300.00, 12, 'Acceso ilimitado y descuento en clases especiales'),
     ('limitada', 15.00, 1, 'Acceso limitado a clases específicas');
+CREATE INDEX idx_miembro_entrenamiento ON miembro_entrenamiento (id_miembro, id_especialidad);
+CREATE INDEX idx_clase_especialidad ON clase (id_especialidad);
+CREATE INDEX idx_asistencia_clase_miembro ON asistencia (id_clase, id_miembro);
 
 
 

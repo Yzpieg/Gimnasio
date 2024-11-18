@@ -5,6 +5,26 @@ require_once 'includes/member_functions.php';
 
 $conn = obtenerConexion();
 $id_usuario = $_SESSION['id_usuario'];
+
+// Procesar el formulario si se ha enviado
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nombre = $_POST['nombre'];
+    $email = $_POST['email'];
+    $fecha_registro = $_POST['fecha_registro'];
+    $id_membresia = $_POST['id_membresia'] ?? null;
+
+    // Llama a la función para actualizar los datos
+    $resultado = actualizarMiembro($conn, $id_usuario, $nombre, $email, $fecha_registro, $id_membresia);
+
+    if ($resultado['success']) {
+        header('Location: miembro.php?mensaje=perfil_actualizado');
+        exit;
+    } else {
+        $error = "Error: " . $resultado['message'];
+    }
+}
+
+// Obtener la información del miembro para mostrar en el formulario
 $miembro = obtenerMiembroPorID($conn, $id_usuario);
 
 if (!$miembro) {
@@ -18,12 +38,13 @@ $membresias = obtenerMembresias($conn);
 
 <!-- Contenedor principal -->
 <main class="form_container">
-    <h1>EN CONSTRUCCIÓN</h1>
-    <h2>Editar Perfil</h2>
-    <form action="includes/procesar_editar_perfil.php" method="POST">
-        <!-- Campo oculto para ID de usuario -->
-        <input type="hidden" name="id_usuario" value="<?php echo htmlspecialchars($miembro['id_usuario']); ?>">
+    <h1>Editar Perfil</h1>
 
+    <?php if (isset($error)): ?>
+        <p style="color: red;"><?php echo htmlspecialchars($error); ?></p>
+    <?php endif; ?>
+
+    <form action="editar_perfil.php" method="POST">
         <!-- Nombre -->
         <label for="nombre">Nombre Completo:</label>
         <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($miembro['nombre']); ?>" required>
