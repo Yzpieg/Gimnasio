@@ -111,12 +111,21 @@ try {
             <thead>
                 <tr>
                     <th>Nombre de la Clase</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 <?php while ($claseInscrita = $resultadoClasesInscritas->fetch_assoc()): ?>
                     <tr>
                         <td><?php echo htmlspecialchars($claseInscrita['nombre']); ?></td>
+                        <td>
+                            <!-- Botón para borrarse -->
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="id_clase" value="<?php echo $claseInscrita['id_clase']; ?>">
+                                <input type="hidden" name="accion" value="borrarse">
+                                <button type="submit" class="btn-general btn-danger">Borrarme</button>
+                            </form>
+                        </td>
                     </tr>
                 <?php endwhile; ?>
             </tbody>
@@ -124,6 +133,7 @@ try {
     <?php else: ?>
         <p>No estás inscrito en ninguna clase.</p>
     <?php endif; ?>
+
 
 
     <?php if ($resultadoClases && $resultadoClases->num_rows > 0): ?>
